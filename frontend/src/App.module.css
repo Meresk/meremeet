@@ -1,0 +1,138 @@
+.app {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: #1a252f; /* Раскомментируй если нужен фоновый цвет */
+}
+
+/* Контейнер для лого */
+.logoContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20; /* Выше всех */
+  
+  /* Защита от выделения */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: none;
+  
+  /* Защита от перетаскивания */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  
+  /* Тени для лого */
+  filter: 
+    drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6))
+    drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+}
+
+/* Стили для самого изображения лого */
+.logo {
+  max-width: 666px;
+  height: auto;
+  
+  /* Дублируем защиту */
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  
+  /* Убираем синее выделение на мобильных */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Надпись в углу */
+.creatortxt {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 20; /* Такой же как у лого */
+  
+  /* Защита текста */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Ховер эффект для надписи (опционально) */
+.creatortxt:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* === АДАПТИВНОСТЬ === */
+
+/* Планшеты (768px и меньше) */
+@media (max-width: 768px) {
+  .logo {
+    width: 450px; /* Уменьшаем лого */
+  }
+  
+  .creatortxt {
+    font-size: 13px;
+    padding: 6px 12px;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+
+/* Телефоны (480px и меньше) */
+@media (max-width: 480px) {
+  .logo {
+    width: 333px; /* Еще меньше лого */
+  }
+  
+  .creatortxt {
+    font-size: 12px;
+    padding: 5px 10px;
+    bottom: 10px;
+    right: 10px;
+    backdrop-filter: blur(4px); /* Меньше размытия для производительности */
+  }
+  
+  /* Убираем ховер на тач-устройствах */
+  .creatortxt:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Очень маленькие телефоны (360px и меньше) */
+@media (max-width: 360px) {
+  .logo {
+    width: 200px;
+  }
+  
+  .creatortxt {
+    font-size: 11px;
+    padding: 4px 8px;
+    bottom: 8px;
+    right: 8px;
+  }
+}
+
+/* Ландшафтная ориентация на телефонах */
+@media (max-height: 500px) and (orientation: landscape) {
+  .logo {
+    width: 220px; /* Еще меньше в ландшафте */
+  }
+  
+  .creatortxt {
+    bottom: 5px;
+    right: 5px;
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+}
