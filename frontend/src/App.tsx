@@ -1,4 +1,4 @@
-import Logo from './assets/mm-b-1.svg';
+import Logo from './assets/logomm.svg';
 import styles from './App.module.css';
 import ParticlesBackground from './components/ParticlesBackground';
 import CanvasBackground from './components/CanvasBackground';

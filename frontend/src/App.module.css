@@ -2,7 +2,7 @@
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-  background: #1a252f; /* Раскомментируй если нужен фоновый цвет */
+  background: #1a252f; 
 }
 
 /* Контейнер для лого */
@@ -26,7 +26,7 @@
   -o-user-drag: none;
 
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
@@ -38,8 +38,17 @@
     drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
 }
 
+/* Плавное свечение при наведении */
+.logoContainer:hover {
+  filter: 
+    drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6))
+    drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 6px rgba(59, 131, 246, 0.479));
+}
+
 .logoContainer:active {
-  transform: translate(-50%, -50%) scale(0.95);
+  transform: translate(-50%, -50%) scale(0.98);
+  transition: transform 0.1s ease;
 }
 
 /* Стили для самого изображения лого */
