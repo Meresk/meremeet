@@ -4,6 +4,15 @@
     box-sizing: border-box;
 }
 
+*:focus {
+  outline: none;
+}
+
+button, a, [onclick], [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }

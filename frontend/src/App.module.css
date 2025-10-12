@@ -18,18 +18,28 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  pointer-events: none;
   
   /* Защита от перетаскивания */
   -webkit-user-drag: none;
   -khtml-user-drag: none;
   -moz-user-drag: none;
   -o-user-drag: none;
+
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  outline: none;
   
   /* Тени для лого */
   filter: 
     drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6))
     drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+}
+
+.logoContainer:active {
+  transform: translate(-50%, -50%) scale(0.95);
 }
 
 /* Стили для самого изображения лого */
