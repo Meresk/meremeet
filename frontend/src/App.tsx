@@ -1,19 +1,26 @@
 import Logo from './assets/logomm.svg';
-import styles from './App.module.css';
+import styles from './styles/App.module.css';
 import ParticlesBackground from './components/ParticlesBackground';
 import CanvasBackground from './components/CanvasBackground';
 import { useState } from 'react';
 import RoomModal from './components/RoomModal';
+import LoginModal from './components/LoginModal';
 
 function App() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
+    const [IsLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
     const handleLogoClick = () => {
-        setIsModalOpen(true);
+        setIsRoomModalOpen(true);
     };
 
+    const handleCreatorClick = () => {
+        setIsLoginModalOpen(true);
+    }
+
     const handleCloseModal = () => {
-        setIsModalOpen(false);
+        setIsRoomModalOpen(false);
+        setIsLoginModalOpen(false);
     };
 
     return (
@@ -33,10 +40,16 @@ function App() {
             </div>
 
             { /* Modal window for entry to room*/}
-            <RoomModal isOpen={isModalOpen} onClose={handleCloseModal} />
+            <RoomModal isOpen={isRoomModalOpen} onClose={handleCloseModal} />
+
+            <LoginModal isOpen={IsLoginModalOpen} onClose={handleCloseModal} />
 
             { /* Creator text */ }
-            <div className={styles.creatortxt}>
+            <div
+                className={styles.creatortxt}
+                onClick={handleCreatorClick}
+                style={{cursor: 'pointer'}}
+            >
                 by. meresk.
             </div>
         </div>

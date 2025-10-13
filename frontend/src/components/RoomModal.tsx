@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from '../RoomModal.module.css';
+import styles from '../styles/RoomModal.module.css';
 
 interface RoomModalProps {
     isOpen: boolean;
