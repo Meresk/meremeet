@@ -131,7 +131,7 @@
 /* Очень маленькие телефоны (360px и меньше) */
 @media (max-width: 360px) {
   .logo {
-    width: 200px;
+    width: 300px;
   }
   
   .creatortxt {
@@ -145,7 +145,7 @@
 /* Ландшафтная ориентация на телефонах */
 @media (max-height: 500px) and (orientation: landscape) {
   .logo {
-    width: 220px; /* Еще меньше в ландшафте */
+    width: 350px; /* Еще меньше в ландшафте */
   }
   
   .creatortxt {

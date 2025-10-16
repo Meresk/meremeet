@@ -9,31 +9,34 @@ interface LoginModalProps {
 const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [loginError, setLoginError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
     useEffect(() => {
         if (isOpen) {
-            document.body.style.overflow = 'hidden';
+            setIsVisible(true);
         } else {
-            document.body.style.overflow = 'unset';
+            setLoginError('');
+            setPasswordError('');
+            setTimeout(() => setIsVisible(false), 300);
         }
-
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
     }, [isOpen]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
-        
-        // Имитация запроса
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        console.log('Login attempt:', { username, password, rememberMe });
-        setIsLoading(false);
-        // Здесь будет логика входа
+        if (!username) {
+            setLoginError('Название комнаты обязательно');
+            return;
+        }
+        setLoginError('');
+        if (!password) {
+            setPasswordError('Название комнаты обязательно');
+            return;
+        } 
+        setPasswordError('');
+        console.log('Username:', username, 'Password:', password);
+        // Здесь логика авторизации
     };
 
     const handleOverlayClick = (e: React.MouseEvent) => {
@@ -42,97 +45,49 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         }
     };
 
-    const handleCloseClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        onClose();
-    };
-
-    if (!isOpen) return null;
+    if (!isVisible) return null;
 
     return (
-        <div className={styles.modalOverlay} onClick={handleOverlayClick}>
-            <div className={styles.modalContent}>
-                <button 
-                    className={styles.closeButton} 
-                    onClick={handleCloseClick}
-                    aria-label="Закрыть"
-                >
-                    ×
-                </button>
+        <div 
+            className={`${styles.overlay} ${isOpen ? styles.overlayOpen : styles.overlayClosed}`}
+            onClick={handleOverlayClick}
+        >
+            <div className={`${styles.modal} ${isOpen ? styles.modalOpen : styles.modalClosed}`}>
+                <button className={styles.closeButton} onClick={onClose}>×</button>
                 
-                <div className={styles.modalHeader}>
-                    <div className={styles.logoContainer}>
-                        <div className={styles.logoIcon}>🔐</div>
-                    </div>
-                    <h2 className={styles.title}>Авторизация</h2>
-                </div>
+                <h2 className={styles.title}>{'.mere-in'}</h2>
 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.inputGroup}>
-                        <label htmlFor="username" className={styles.label}>
-                            Имя пользователя
-                        </label>
-                        <div className={styles.inputWrapper}>
-                            <input
-                                id="username"
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                className={styles.input}
-                                placeholder="Введите ваш логин"
-                                required
-                                disabled={isLoading}
-                            />
-                            <span className={styles.inputIcon}>👤</span>
-                        </div>
+                        <input
+                            id="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => {
+                                setUsername(e.target.value)
+                                if (loginError) setLoginError('');
+                            }}
+                            className={`${styles.input} ${loginError ? styles.inputError : ''}`}
+                            placeholder="login"
+                        />
                     </div>
-
+                    
                     <div className={styles.inputGroup}>
-                        <label htmlFor="password" className={styles.label}>
-                            Пароль
-                        </label>
-                        <div className={styles.inputWrapper}>
-                            <input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className={styles.input}
-                                placeholder="Введите ваш пароль"
-                                required
-                                disabled={isLoading}
-                            />
-                            <span className={styles.inputIcon}>🔒</span>
-                        </div>
+                        <input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value)
+                                if (loginError) setPasswordError('');
+                            }}
+                            className={`${styles.input} ${passwordError ? styles.inputError : ''}`}
+                            placeholder="password"
+                        />
                     </div>
-
-                    <div className={styles.options}>
-                        <label className={styles.checkboxLabel}>
-                            <input
-                                type="checkbox"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                                className={styles.checkbox}
-                                disabled={isLoading}
-                            />
-                            <span className={styles.checkmark}></span>
-                            Запомнить меня
-                        </label>
-                    </div>
-
-                    <button 
-                        type="submit" 
-                        className={`${styles.submitButton} ${isLoading ? styles.loading : ''}`}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <>
-                                <div className={styles.spinner}></div>
-                                Вход в систему...
-                            </>
-                        ) : (
-                            'Войти'
-                        )}
+                    
+                    <button type="submit" className={styles.submitButton}>
+                        go
                     </button>
                 </form>
             </div>

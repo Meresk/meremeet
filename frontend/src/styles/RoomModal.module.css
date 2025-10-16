@@ -4,14 +4,17 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(20px) saturate(180%);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .overlayOpen {
@@ -26,44 +29,53 @@
 
 @keyframes overlayAppear {
     0% {
-        backdrop-filter: blur(0px);
+        backdrop-filter: blur(0px) saturate(100%);
         background: rgba(0, 0, 0, 0);
     }
     100% {
-        backdrop-filter: blur(12px);
-        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px) saturate(180%);
+        background: rgba(0, 0, 0, 0.9);
     }
 }
 
 @keyframes overlayDisappear {
     0% {
         opacity: 1;
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(20px) saturate(180%);
     }
     100% {
         opacity: 0;
-        backdrop-filter: blur(0px);
+        backdrop-filter: blur(0px) saturate(100%);
     }
 }
 
 .modal {
-    background: linear-gradient(135deg, rgba(26, 37, 47, 0.95) 0%, rgba(44, 62, 80, 0.95) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 24px;
+    background: radial-gradient(
+        circle at 50% 40%,
+        rgba(45, 50, 71, 0.8) 0%,
+        rgba(20, 25, 35, 0.88) 60%,
+        rgba(10, 10, 20, 0.95) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
     padding: 2.5rem;
-    width: 90%;
-    max-width: 420px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 85vh;
     position: relative;
     transform: scale(0.8) translateY(30px) rotateX(10deg);
     opacity: 0;
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(40px);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    perspective: 1000px;
+    backdrop-filter: blur(40px) saturate(160%);
+    box-shadow:
+        0 40px 80px rgba(0, 0, 0, 0.75),
+        0 0 40px rgba(110, 130, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
 }
+
 
 .modalOpen {
     transform: scale(1) translateY(0) rotateX(0);
@@ -76,6 +88,7 @@
     opacity: 0;
     animation: modalDisappear 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
 
 @keyframes modalAppear {
     0% {
@@ -104,13 +117,12 @@
 
 .closeButton {
     position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.8);
-    font-size: 2rem;
-    font-weight: 200;
+    font-size: 24px;
     cursor: pointer;
     width: 40px;
     height: 40px;
@@ -118,42 +130,40 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(20px);
     z-index: 1001;
-    padding: 0;
-    margin: 0;
+    touch-action: manipulation;
 }
 
-/* Простой ховер */
-.closeButton:hover,
+.closeButton:hover {
+    color: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg) scale(1.05);
+}
+
 .closeButton:active {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    transform: scale(1.05);
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.1);
 }
 
-/* Мобильная версия */
-@media (max-width: 768px) {
-    .closeButton {
-        width: 40px;
-        height: 40px;
-        top: 1rem;
-        right: 1rem;
-        font-size: 2.2rem;
-        background: rgba(255, 255, 255, 0.15); /* Более заметная на мобильных */
-    }
-}
 
 .title {
-    color: white;
+    color: rgba(255, 255, 255, 0.95);
     text-align: center;
-    margin-bottom: 2.5rem;
-    font-size: 1.6rem;
-    font-weight: 300;
-    letter-spacing: 0.5px;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
     opacity: 0;
     transform: translateY(10px);
     animation: titleAppear 0.5s ease 0.3s forwards;
+    flex-shrink: 0;
+    text-shadow:
+        0 2px 4px rgba(0,0,0,0.3),
+        0 4px 8px rgba(0,0,0,0.2),
+        0 8px 12px rgba(0,0,0,0.15);
 }
 
 @keyframes titleAppear {
@@ -166,15 +176,21 @@
 .form {
     display: flex;
     flex-direction: column;
-    gap: 1.8rem;
+    gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .inputGroup {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0;
     opacity: 0;
     transform: translateY(15px);
+    flex-shrink: 0;
+    width: 100%;
 }
 
 .inputGroup:nth-child(1) {
@@ -185,6 +201,10 @@
     animation: inputAppear 0.5s ease 0.5s forwards;
 }
 
+.inputGroup:nth-child(3) {
+    animation: inputAppear 0.5s ease 0.6s forwards;
+}
+
 @keyframes inputAppear {
     to {
         opacity: 1;
@@ -192,95 +212,142 @@
     }
 }
 
-.label {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.95rem;
-    font-weight: 400;
-    letter-spacing: 0.3px;
-}
-
 .input {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    padding: 1rem 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.2rem 1.2rem;
     color: white;
     font-size: 1rem;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(20px);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(30px);
+    box-shadow: 
+        inset 0 2px 6px rgba(0, 0, 0, 0.2),
+        0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.input::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        transparent 50%);
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .input:hover {
-    border-color: rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-1px);
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .input:focus {
     outline: none;
-    border-color: rgba(102, 126, 234, 0.6);
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-1px);
+    border-color: rgba(102, 126, 234, 0.8);
+    background: rgba(255, 255, 255, 0.09);
+    transform: translateY(-2px);
     box-shadow: 
-        0 4px 12px rgba(102, 126, 234, 0.2),
-        inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        0 8px 24px rgba(102, 126, 234, 0.25),
+        inset 0 2px 8px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(102, 126, 234, 0.1);
 }
 
 .input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-    transition: opacity 0.3s ease;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+    transition: all 0.3s ease;
+    letter-spacing: 0.2px;
 }
 
 .input:focus::placeholder {
-    opacity: 0.7;
+    opacity: 0.6;
+    transform: translateX(4px);
 }
 
 .submitButton {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 12px;
-    padding: 1.1rem 1.5rem;
-    color: white;
+    background: linear-gradient(135deg,
+        rgba(90, 100, 255, 0.2) 0%,
+        rgba(40, 45, 120, 0.6) 50%,
+        rgba(20, 22, 60, 0.8) 100%);
+    border: 1px solid rgba(120, 130, 255, 0.25);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    color: #f6f7ff;
     font-size: 1.05rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    margin-top: 1rem;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-top: auto;
     opacity: 0;
     transform: translateY(10px);
-    animation: buttonAppear 0.5s ease 0.6s forwards;
+    animation: buttonAppear 0.6s ease 0.7s forwards;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    box-shadow:
+        0 0 25px rgba(120, 130, 255, 0.25),
+        inset 0 0 12px rgba(120, 130, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    min-width: 240px;
+    margin-bottom: 0;
+    margin-top: 5px;
 }
 
 .submitButton::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    left: -120%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.6s ease;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent);
+    transition: left 0.7s ease;
 }
 
 .submitButton:hover::before {
-    left: 100%;
+    left: 120%;
 }
 
 .submitButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-        0 8px 25px rgba(102, 126, 234, 0.4),
-        0 4px 12px rgba(118, 75, 162, 0.3);
+    transform: translateY(-3px);
+    background: linear-gradient(135deg,
+        rgba(110, 125, 255, 0.35) 0%,
+        rgba(60, 65, 180, 0.6) 45%,
+        rgba(25, 25, 80, 0.85) 100%);
+    border-color: rgba(140, 150, 255, 0.35);
+    box-shadow:
+        0 0 35px rgba(130, 140, 255, 0.4),
+        inset 0 0 16px rgba(130, 140, 255, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .submitButton:active {
-    transform: translateY(0);
-    box-shadow: 
-        0 4px 12px rgba(102, 126, 234, 0.3),
-        0 2px 6px rgba(118, 75, 162, 0.2);
+    transform: translateY(-1px);
+    background: linear-gradient(135deg,
+        rgba(80, 90, 200, 0.3) 0%,
+        rgba(40, 45, 120, 0.6) 50%,
+        rgba(15, 18, 55, 0.85) 100%);
+    box-shadow:
+        0 0 18px rgba(110, 120, 255, 0.25),
+        inset 0 0 8px rgba(100, 110, 255, 0.2);
 }
+
 
 @keyframes buttonAppear {
     to {
@@ -289,48 +356,195 @@
     }
 }
 
+.inputError {
+    border-color: #b55050;
+    box-shadow: 0 0 6px rgba(181, 80, 80, 0.4); 
+    background: rgba(255, 255, 255, 0.05);
+    position: relative;
+    animation: shake 0.3s ease;
+}
+
+.inputError::after {
+    content: "!";
+    color: #5f1212;
+    font-weight: bold;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
 /* === АДАПТИВНОСТЬ === */
 
+@media (min-width: 1200px) {
+    .modal {
+        max-width: 600px; 
+        padding: 3rem 3rem 1.5rem;    
+    }
+
+    .title {
+        font-size: 2rem;  
+        margin-bottom: 2.5rem;
+    }
+
+    .input {
+        padding: 1.4rem 1.4rem; 
+        border-radius: 18px;
+        font-size: 1.05rem;
+    }
+
+    .submitButton {
+        padding: 1.5rem 1.8rem;
+        font-size: 1.1rem;
+        border-radius: 18px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .modal {
+        max-width: 540px;  
+        padding: 2.8rem;   
+    }
+
+    .title {
+        font-size: 1.9rem;
+        margin-bottom: 2.2rem;
+    }
+
+    .input {
+        padding: 1.3rem 1.3rem;
+        font-size: 1.03rem;
+        border-radius: 16px;
+    }
+
+    .submitButton {
+        padding: 1.4rem 1.6rem;
+        font-size: 1.07rem;
+        border-radius: 16px;
+    }
+}
+
 @media (max-width: 768px) {
+    .overlay {
+        padding: 15px;
+    }
+    
     .modal {
         padding: 2rem;
-        margin: 1rem;
-        width: calc(100% - 2rem);
+        border-radius: 24px;
+        max-height: 90vh;
+    }
+    
+    .title {
+        font-size: 1.6rem;
+        margin-bottom: 1.8rem;
+    }
+    
+    .form {
+        gap: 1.3rem;
+    }
+    
+    .input {
+        padding: 1.1rem 1.1rem;
+        border-radius: 14px;
+    }
+    
+    .submitButton {
+        padding: 1.2rem 1.4rem;
+        border-radius: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .overlay {
+        padding: 10px;
+    }
+    
+    .modal {
+        padding: 1.8rem;
         border-radius: 20px;
     }
     
     .title {
-        font-size: 1.4rem;
-        margin-bottom: 2rem;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
     }
     
+    .closeButton {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+        top: 16px;
+        right: 16px;
+    }
+    
+    .input {
+        padding: 1rem 1rem;
+        border-radius: 12px;
+    }
+    
+    .submitButton {
+        padding: 1.1rem 1.3rem;
+        border-radius: 12px;
+    }
 }
 
-@media (max-width: 480px) {
+@media (max-height: 500px) and (orientation: landscape) {
+    .overlay {
+        padding: 10px;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+    
     .modal {
-        padding: 1.5rem;
-        border-radius: 18px;
+        max-height: none;
+        margin: 20px 0;
+        padding: 1.8rem;
+    }
+    
+    .title {
+        margin-bottom: 1.2rem;
+        font-size: 1.4rem;
+    }
+    
+    .form {
+        gap: 1rem;
+    }
+    
+    .input {
+        padding: 0.8rem 1rem;
+    }
+    
+    .submitButton {
+        padding: 0.9rem 1.2rem;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-height: 400px) {
+    .modal {
+        padding: 1.2rem;
     }
     
     .title {
         font-size: 1.3rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .input, .submitButton {
-        padding: 0.9rem 1.1rem;
-        font-size: 0.95rem;
+        margin-bottom: 1rem;
     }
     
     .form {
-        gap: 1.5rem;
+        gap: 0.8rem;
     }
-}
+    
+    .input {
+        padding: 0.7rem 0.9rem;
+    }
 
-@media (max-height: 600px) {
-    .modal {
-        max-height: 85vh;
-        overflow-y: auto;
-        padding: 1.5rem;
+     .closeButton {
+        top: 8px;
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
     }
 }

@@ -7,20 +7,35 @@ interface RoomModalProps {
 }
 
 const RoomModal = ({ isOpen, onClose }: RoomModalProps) => {
+    const [userName, setUserName] = useState('');
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
     const [isVisible, setIsVisible] = useState(false);
+    const [roomError, setRoomError] = useState('');
+    const [userError, setUserError] = useState('');
 
     useEffect(() => {
         if (isOpen) {
             setIsVisible(true);
         } else {
+            setRoomError('');
+            setUserError('');
             setTimeout(() => setIsVisible(false), 300);
         }
     }, [isOpen]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!userName) {
+            setUserError('имя пользователя обязательно');
+            return;
+        }
+        setUserError('');
+        if (!roomName) {
+            setRoomError('Название комнаты обязательно');
+            return;
+        }
+        setRoomError('');
         console.log('Room:', roomName, 'Password:', password);
         // Здесь логика входа в комнату
     };
@@ -41,41 +56,50 @@ const RoomModal = ({ isOpen, onClose }: RoomModalProps) => {
             <div className={`${styles.modal} ${isOpen ? styles.modalOpen : styles.modalClosed}`}>
                 <button className={styles.closeButton} onClick={onClose}>×</button>
                 
-                <h2 className={styles.title}>Вход в комнату</h2>
+                <h2 className={styles.title}>.mere-room</h2>
                 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <div className={styles.inputGroup}>
-                        <label htmlFor="roomName" className={styles.label}>
-                            Название комнаты
-                        </label>
+                        <input
+                            id="userName"
+                            type="text"
+                            value={userName}
+                            onChange={(e) => {
+                                setUserName(e.target.value);
+                                if (userError) setUserError('');
+                            }}
+                            className={`${styles.input} ${userError ? styles.inputError : ''}`}
+                            placeholder="user"
+                        />
+                    </div>
+
+                    <div className={styles.inputGroup}>
                         <input
                             id="roomName"
                             type="text"
                             value={roomName}
-                            onChange={(e) => setRoomName(e.target.value)}
-                            className={styles.input}
-                            placeholder="Введите название комнаты"
-                            required
-                            autoFocus
+                            onChange={(e) => {
+                                setRoomName(e.target.value);
+                                if (roomError) setRoomError('');
+                            }}
+                            className={`${styles.input} ${roomError ? styles.inputError : ''}`}
+                            placeholder="room"
                         />
                     </div>
                     
                     <div className={styles.inputGroup}>
-                        <label htmlFor="password" className={styles.label}>
-                            Пароль (опционально)
-                        </label>
                         <input
                             id="password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className={styles.input}
-                            placeholder="Введите пароль"
+                            placeholder="password"
                         />
                     </div>
                     
                     <button type="submit" className={styles.submitButton}>
-                        Присоединиться
+                        proceed
                     </button>
                 </form>
             </div>
