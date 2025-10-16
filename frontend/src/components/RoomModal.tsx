@@ -4,6 +4,7 @@ import styles from '../styles/RoomModal.module.css';
 interface RoomModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onRoomEnter: (roomId: string) => void;
 }
 
 const RoomModal = ({ isOpen, onClose }: RoomModalProps) => {
@@ -36,7 +37,7 @@ const RoomModal = ({ isOpen, onClose }: RoomModalProps) => {
             return;
         }
         setRoomError('');
-        console.log('Room:', roomName, 'Password:', password);
+        console.log('User:', userName ,'Room:', roomName, 'Password:', password);
         // Здесь логика входа в комнату
     };
 

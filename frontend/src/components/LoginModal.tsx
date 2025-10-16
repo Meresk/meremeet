@@ -4,6 +4,7 @@ import styles from '../styles/LoginModal.module.css';
 interface LoginModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onLoginSuccess: (userId: string) => void;
 }
 
 const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
@@ -26,12 +27,12 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!username) {
-            setLoginError('Название комнаты обязательно');
+            setLoginError('логин обязателен');
             return;
         }
         setLoginError('');
         if (!password) {
-            setPasswordError('Название комнаты обязательно');
+            setPasswordError('пароль обязателен');
             return;
         } 
         setPasswordError('');

@@ -3,7 +3,25 @@ import Particles from 'react-tsparticles';
 import { loadSlim } from 'tsparticles-slim';
 import type { Engine } from 'tsparticles-engine';
 
-const ParticlesBackground = () => {
+interface ParticlesBackgroundProps {
+  colors?: string[];
+  particleCount?: number;
+  speed?: number;
+  opacity?: { min: number; max: number };
+  size?: { min: number; max: number };
+  twinkle?: boolean;
+  interactivity?: boolean;
+}
+
+const ParticlesBackground = ({
+  colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c'],
+  particleCount = 88,
+  speed = 0.2,
+  opacity = { min: 0.02, max: 0.3 },
+  size = { min: 1, max: 5 },
+  twinkle = true,
+  interactivity = true
+}: ParticlesBackgroundProps) => {
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
@@ -21,11 +39,11 @@ const ParticlesBackground = () => {
         fpsLimit: 60,
         particles: {
           color: {
-            value: ['#667eea', '#764ba2', '#f093fb', '#f5576c'],
+            value: colors,
           },
           move: {
             enable: true,
-            speed: 0.2,
+            speed: speed,
             direction: 'none',
             random: true,
             straight: false,
@@ -34,14 +52,14 @@ const ParticlesBackground = () => {
             },
           },
           number: {
-            value: 88,
+            value: particleCount,
             density: {
               enable: true,
               area: 666,
             },
           },
           opacity: {
-            value: { min: 0.02, max: 0.3 },
+            value: opacity,
             animation: {
               enable: true,
               speed: 0.5,
@@ -52,23 +70,23 @@ const ParticlesBackground = () => {
             type: 'circle',
           },
           size: {
-            value: { min: 1, max: 5 },
+            value: size,
             animation: {
               enable: true,
               speed: 2,
               sync: false,
             }
           },
-          twinkle: {
+          twinkle: twinkle ? {
             particles: {
               enable: true,
               color: '#ffffff',
               frequency: 0.05,
               opacity: 1,
             },
-          },
+          } : undefined,
         },
-        interactivity: {
+        interactivity: interactivity ? {
           events: {
             onHover: {
               enable: true,
@@ -84,7 +102,7 @@ const ParticlesBackground = () => {
               radius: 150,
             },
           },
-        },
+        } : undefined,
         detectRetina: true,
       }}
     />

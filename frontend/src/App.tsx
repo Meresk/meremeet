@@ -1,59 +1,19 @@
-import Logo from './assets/logomm.svg';
-import styles from './styles/App.module.css';
-import ParticlesBackground from './components/ParticlesBackground';
-import CanvasBackground from './components/CanvasBackground';
-import { useState } from 'react';
-import RoomModal from './components/RoomModal';
-import LoginModal from './components/LoginModal';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import UserPage from './pages/UserPage';
+import RoomPage from './pages/RoomPage';
+import NotFound from './pages/NotFound';
+import './styles/App.module.css';
 
 function App() {
-    const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
-    const [IsLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-    const handleLogoClick = () => {
-        setIsRoomModalOpen(true);
-    };
-
-    const handleCreatorClick = () => {
-        setIsLoginModalOpen(true);
-    }
-
-    const handleCloseModal = () => {
-        setIsRoomModalOpen(false);
-        setIsLoginModalOpen(false);
-    };
-
     return (
-        <div className={styles.app}>
-            {/* Canvas background*/}
-            <CanvasBackground />
-            { /* Particles */}
-            <ParticlesBackground />
-
-            { /* LOGO */ }
-            <div 
-                className={styles.logoContainer} 
-                onClick={handleLogoClick}
-                style={{ cursor: 'pointer' }}
-            >
-                <img src={Logo} alt="Logo" className={styles.logo}/>
-            </div>
-
-            { /* Modal window for entry to room*/}
-            <RoomModal isOpen={isRoomModalOpen} onClose={handleCloseModal} />
-
-            <LoginModal isOpen={IsLoginModalOpen} onClose={handleCloseModal} />
-
-            { /* Creator text */ }
-            <div
-                className={styles.creatortxt}
-                onClick={handleCreatorClick}
-                style={{cursor: 'pointer'}}
-            >
-                by. meresk.
-            </div>
-        </div>
-    )
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/user/:userId" element={<UserPage />} />
+            <Route path="/room/:roomId" element={<RoomPage />} />
+            <Route path="*" element={<NotFound />} />
+        </Routes>
+    );
 }
 
 export default App;

@@ -12,6 +12,7 @@
   "dependencies": {
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.4",
     "react-tsparticles": "^2.12.2",
     "tsparticles": "^3.9.1",
     "tsparticles-engine": "^2.12.0",
