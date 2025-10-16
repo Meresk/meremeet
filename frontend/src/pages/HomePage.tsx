@@ -1,7 +1,5 @@
 import Logo from '../assets/logomm.svg';
 import styles from '../styles/App.module.css';
-import ParticlesBackground from '../components/ParticlesBackground';
-import CanvasBackground from '../components/CanvasBackground';
 import { useState } from 'react';
 import RoomModal from '../components/RoomModal';
 import LoginModal from '../components/LoginModal';
@@ -36,9 +34,6 @@ function HomePage() {
 
     return (
         <div className={styles.app}>
-            <CanvasBackground />
-            <ParticlesBackground />
-
             <div 
                 className={styles.logoContainer} 
                 onClick={handleLogoClick}
