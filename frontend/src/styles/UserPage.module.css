@@ -1,0 +1,388 @@
+.container {
+    min-height: 100vh;
+    position: relative;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Панель создания комнаты */
+.creationPanel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.creationPanel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 107, 107, 0.6), 
+        rgba(78, 205, 196, 0.6), 
+        transparent
+    );
+}
+
+.panelHeader {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.panelTitle {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.panelSubtitle {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    letter-spacing: 0.2em;
+    text-transform: lowercase;
+    font-style: italic;
+}
+
+/* Форма */
+.creationForm {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.inputWrapper {
+    position: relative;
+}
+
+.inputField {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 1rem 0;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+}
+
+.inputField:focus {
+    outline: none;
+}
+
+.inputLabel {
+    position: absolute;
+    top: 1rem;
+    left: 0;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.inputField:focus + .inputLabel,
+.inputField:not(:placeholder-shown) + .inputLabel {
+    top: -0.5rem;
+    font-size: 0.8rem;
+    color: #ff6b6b;
+}
+
+.inputLine {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.inputLine::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+    transition: left 0.4s ease;
+}
+
+.inputField:focus ~ .inputLine::after {
+    left: 0;
+}
+
+/* Кнопка создания */
+.createBtn {
+    position: relative;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    border: none;
+    padding: 1.4rem 2rem;
+    color: white;
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-radius: 12px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    margin-top: 1rem;
+}
+
+.createBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 12px 40px rgba(255, 107, 107, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.createBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.createBtn.creating {
+    background: linear-gradient(135deg, #4a4a4a 0%, #666 100%);
+}
+
+.btnText {
+    position: relative;
+    z-index: 3;
+    transition: all 0.3s ease;
+}
+
+.createBtn.creating .btnText {
+    animation: pulse 1.5s infinite;
+}
+
+.btnParticles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.8) 2px, transparent 0),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.6) 1px, transparent 0),
+        radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.7) 1px, transparent 0);
+    background-size: 50% 50%, 60% 60%, 70% 70%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.createBtn:hover .btnParticles {
+    opacity: 1;
+}
+
+.btnGlow {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b);
+    background-size: 400% 400%;
+    border-radius: 14px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: gradientShift 3s ease infinite;
+}
+
+.createBtn:hover .btnGlow {
+    opacity: 1;
+}
+
+/* Панель комнат */
+.roomsPanel {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 2rem;
+    height: fit-content;
+}
+
+.roomsHeader {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.roomsTitle {
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.roomsCount {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.roomsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.roomItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.roomItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 107, 107, 0.2);
+    transform: translateX(5px);
+}
+
+.roomItem.private {
+    border-left: 3px solid #ff6b6b;
+}
+
+.roomInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.roomName {
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.lockIcon {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.roomUsers {
+    background: rgba(78, 205, 196, 0.15);
+    color: #4ecdc4;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-width: 2rem;
+    text-align: center;
+}
+
+/* Декоративные элементы */
+.cornerAccent {
+    position: fixed;
+    top: -300px;
+    right: -300px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 107, 107, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.gridOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(255, 107, 107, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 107, 107, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+/* Анимации */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Адаптивность */
+@media (max-width: 968px) {
+    .container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .creationPanel {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .creationPanel {
+        padding: 1.5rem;
+    }
+    
+    .panelTitle {
+        font-size: 1.4rem;
+        letter-spacing: 0.2em;
+    }
+    
+    .createBtn {
+        padding: 1.2rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .roomItem {
+        padding: 0.8rem 1rem;
+    }
+}
