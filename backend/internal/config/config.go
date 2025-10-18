@@ -1,6 +1,8 @@
 package config
 
-import "os"
+import (
+	"os"
+)
 
 type Config struct {
 	Port  string
@@ -9,8 +11,8 @@ type Config struct {
 
 func Load() *Config {
 	return &Config{
-		Port:  getEnv("PORT", "8080"),
-		DbURL: getEnv("DB_URL", "postgres://user:pass@localhost:5432/mydb"),
+		Port:  getEnv("PORT", "3000"),
+		DbURL: getEnv("DB_URL", "host=127.0.0.1 port=5432 user=yakov password=admin dbname=meremeet sslmode=disable"),
 	}
 }
 
