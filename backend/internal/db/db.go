@@ -6,6 +6,7 @@ import (
 	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func NewPostgresDB(connStr string) (*sql.DB, error) {
@@ -22,6 +23,10 @@ func NewPostgresDB(connStr string) (*sql.DB, error) {
 	log.Println("Successfully connected to Postgres database")
 
 	if err := runMigrations(db); err != nil {
+		return nil, err
+	}
+
+	if err := seed(db); err != nil {
 		return nil, err
 	}
 
@@ -59,6 +64,41 @@ func runMigrations(db *sql.DB) error {
 	} else {
 		log.Println("Users table already exists")
 	}
+
+	return nil
+}
+
+func seed(db *sql.DB) error {
+	var adminExists bool
+	err := db.QueryRow(`
+		SELECT EXISTS (
+			SELECT 1 FROM users WHERE login = 'admin'
+		)
+	`).Scan(&adminExists)
+
+	if err != nil {
+		return fmt.Errorf("(seeding) failed to check admin user: %w", err)
+	}
+
+	if adminExists {
+		log.Println("(seeding) Admin user already exists")
+		return nil
+	}
+
+	hashedPass, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("(seeding) failed to hash password for admin: %w", err)
+	}
+
+	_, err = db.Exec(`
+		INSERT INTO users (login, password)
+		VALUES($1, $2)
+	`, "admin", string(hashedPass))
+	if err != nil {
+		return fmt.Errorf("(seeding) failed to create admin user: %w", err)
+	}
+
+	log.Println("(seeding) Admin user created successfully (login: admin, password: admin)")
 
 	return nil
 }
