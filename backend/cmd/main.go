@@ -14,7 +14,7 @@ func main() {
 	// Загрузка конфига
 	cfg := config.Load()
 
-	pgdb, err := db.NewPostgresDB(cfg.DbURL)
+	pgdb, err := db.NewPostgresDB(cfg.DbURL, cfg.AdminDefaultPass)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
