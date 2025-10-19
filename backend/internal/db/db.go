@@ -20,7 +20,7 @@ func NewPostgresDB(connStr string) (*sql.DB, error) {
 		return nil, err
 	}
 
-	log.Println("Successfully connected to Postgres database")
+	log.Println("(db) Successfully connected to Postgres database")
 
 	if err := runMigrations(db); err != nil {
 		return nil, err
@@ -60,9 +60,9 @@ func runMigrations(db *sql.DB) error {
 			return err
 		}
 
-		log.Println("Users table created successfully")
+		log.Println("(migrations) Users table created successfully")
 	} else {
-		log.Println("Users table already exists")
+		log.Println("(migrations) Users table already exists")
 	}
 
 	return nil
