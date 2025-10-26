@@ -18,11 +18,6 @@ function UserPage() {
         { id: 3, name: 'Neon Void', users: 1, isPrivate: true },
         { id: 4, name: 'Cyber Sanctuary', users: 5, isPrivate: false },
         { id: 5, name: 'Data Stream', users: 12, isPrivate: false },
-        { id: 1, name: 'Shadow Realm', users: 3, isPrivate: true },
-        { id: 2, name: 'Digital Abyss', users: 8, isPrivate: false },
-        { id: 3, name: 'Neon Void', users: 1, isPrivate: true },
-        { id: 4, name: 'Cyber Sanctuary', users: 5, isPrivate: false },
-        { id: 5, name: 'Data Stream', users: 12, isPrivate: false },
     ];
 
     const handleRoomCreated = (roomName: string, password?: string) => {
