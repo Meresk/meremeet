@@ -41,7 +41,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	var id int
 	err = h.DB.QueryRow(
 		"INSERT INTO users (login, password) VALUES ($1, $2) RETURNING id",
-		req.Login, hashedPass,
+		req.Login, string(hashedPass),
 	).Scan(&id)
 
 	if err != nil {

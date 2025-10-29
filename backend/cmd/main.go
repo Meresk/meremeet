@@ -8,6 +8,7 @@ import (
 	"mere-meet/backend/internal/middlewares"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
@@ -27,6 +28,13 @@ func main() {
 	app := fiber.New(fiber.Config{
 		AppName: "mere-meet v1",
 	})
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "http://localhost:5173",
+		AllowHeaders:     "Content-Type,Authorization",
+		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
+		AllowCredentials: true,
+	}))
 
 	api := app.Group("/api")
 	api.Post("/user", userHandler.CreateUser, authMw.RequierLogin)

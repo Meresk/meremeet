@@ -1,11 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../styles/UserPage.module.css';
 import CreateRoomModal from '../components/CreateRoomModal';
 import RoomListModal from '../components/RoomListModal';
+import { authService } from '../services/auth/authService';
+import { useNavigate } from 'react-router-dom';
 
 function UserPage() {
+    const navigate = useNavigate();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showListModal, setShowListModal] = useState(false);
+    const [userInfo, setUserInfo] = useState<{ userId: number | null; login: string | null }>({
+        userId: null,
+        login: null
+    });
+
+    useEffect(() => {
+        const userData = authService.getUserInfo();
+        setUserInfo(userData);
+    }, []);
 
     const existingRooms = [
         { id: 1, name: 'Shadow Realm', users: 3, isPrivate: true },
@@ -26,7 +38,8 @@ function UserPage() {
     };
 
     const handleBack = () => {
-        window.location.href = '/';
+        authService.logout();
+        navigate('/');
     };
 
     return (

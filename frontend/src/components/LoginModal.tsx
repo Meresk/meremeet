@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
 import styles from '../styles/LoginModal.module.css';
+import { authService } from '../services/auth/authService';
 
 interface LoginModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onLoginSuccess: (userId: string) => void;
+    onLoginSuccess: () => void;
 }
 
-const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
+const LoginModal = ({ isOpen, onClose, onLoginSuccess }: LoginModalProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -24,20 +26,31 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         }
     }, [isOpen]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!username) {
             setLoginError('логин обязателен');
             return;
         }
         setLoginError('');
+
         if (!password) {
             setPasswordError('пароль обязателен');
             return;
         } 
         setPasswordError('');
-        console.log('Username:', username, 'Password:', password);
-        // Здесь логика авторизации
+
+        setIsLoading(true);
+
+        try {
+            await authService.login({login: username, password});
+            onLoginSuccess();
+            
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleOverlayClick = (e: React.MouseEvent) => {
@@ -87,8 +100,8 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                         />
                     </div>
                     
-                    <button type="submit" className={styles.submitButton}>
-                        go
+                    <button type="submit" className={styles.submitButton} disabled={isLoading}>
+                        {isLoading ? 'going...' : 'go'}
                     </button>
                 </form>
             </div>

@@ -1,2 +1,2 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL; // example - http://localhost:3000/api
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // example - http://localhost:3000/api
 export const LIVEKIT_SERVER_URL = import.meta.env.VITE_LIVEKIT_SERVER_URL; // example - ws://localhost:7880

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import RoomModal from '../components/RoomModal';
 import LoginModal from '../components/LoginModal';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../services/auth/authService';
 
 function HomePage() {
     const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
@@ -15,6 +16,10 @@ function HomePage() {
     };
 
     const handleCreatorClick = () => {
+        if (authService.isAuthenticated()) {
+            navigate('/dashboard');
+            return;
+        }
         setIsLoginModalOpen(true);
     }
 
@@ -28,8 +33,8 @@ function HomePage() {
         navigate(`/room/${roomId}`);
     };
 
-    const handleLoginSuccess = (userId: string) => {
-        navigate(`/user/${userId}`);
+    const handleLoginSuccess = () => {
+        navigate('/dashboard');
     };
 
     return (

@@ -5,13 +5,14 @@ import RoomPage from './pages/RoomPage';
 import NotFound from './pages/NotFound';
 import { DefaultBackground, DarkBackground } from './components/Backgrounds';
 import './styles/App.module.css';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const location = useLocation();
   
   const showDarkBackground = 
     location.pathname !== '/' && 
-    !location.pathname.startsWith('/user/') && 
+    !location.pathname.startsWith('/dashboard') && 
     !location.pathname.startsWith('/room/');
 
   return (
@@ -20,7 +21,7 @@ function App() {
       
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/user/:userId" element={<UserPage />} />
+        <Route path="/dashboard" element={<ProtectedRoute> <UserPage /> </ProtectedRoute>} />
         <Route path="/room/:roomId" element={<RoomPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
