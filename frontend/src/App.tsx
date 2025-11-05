@@ -3,7 +3,7 @@ import HomePage from './pages/HomePage';
 import UserPage from './pages/UserPage';
 import RoomPage from './pages/RoomPage';
 import NotFound from './pages/NotFound';
-import { DefaultBackground, DarkBackground } from './components/Backgrounds';
+import { DefaultBackground, DarkBackground } from './components/Background/Backgrounds';
 import './styles/App.module.css';
 import ProtectedRoute from './components/ProtectedRoute';
 

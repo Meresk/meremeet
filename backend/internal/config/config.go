@@ -9,6 +9,10 @@ type Config struct {
 	DbURL            string
 	JwtSecret        string
 	AdminDefaultPass string
+
+	LiveKitApiKey    string
+	LiveKitApiSecret string
+	LiveKitServerURL string
 }
 
 func Load() *Config {
@@ -17,6 +21,10 @@ func Load() *Config {
 		DbURL:            getEnv("DB_URL", "host=127.0.0.1 port=5432 user=yakov password=admin dbname=meremeet sslmode=disable"),
 		JwtSecret:        getEnv("JWT_SECRET", "hrqwoperyuoy32190437124yiqwuery210934y"),
 		AdminDefaultPass: getEnv("ADMIN_DEFAULT_PASSWORD", "admin"),
+
+		LiveKitApiKey:    getEnv("LIVEKIT_API_KEY", "devkey"),
+		LiveKitApiSecret: getEnv("LIVEKIT_API_SECRET", "secret"),
+		LiveKitServerURL: getEnv("LIVEKIT_SERVER_URL", "http://localhost:7880"),
 	}
 }
 

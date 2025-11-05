@@ -1,0 +1,86 @@
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import NicknameModal from '../components/NicknameModal'
+import { LiveKitRoom, VideoConference } from '@livekit/components-react'
+import '@livekit/components-styles'
+
+const RoomPage = () => {
+  const { roomName } = useParams<{ roomName: string }>()
+  const navigate = useNavigate()
+  const [token, setToken] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(true)
+
+  // Если roomName не передан, редиректим на главную
+  useEffect(() => {
+    if (!roomName) {
+      navigate('/')
+    }
+  }, [roomName, navigate])
+
+  const handleUserEnter = async (userName: string) => {
+    try {
+      const response = await fetch('http://localhost/api/room/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          room_name: roomName,
+          user_name: userName,
+          user_id: `${userName}-${Date.now()}`,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to join room')
+      }
+
+      const data = await response.json()
+      setToken(data.token)
+      setIsModalOpen(false)
+    } catch (error) {
+      console.error('Error joining room:', error)
+      // Здесь можно показать ошибку пользователю
+    }
+  }
+
+  const handleDisconnect = () => {
+    setToken(null)
+    // При отключении не показываем модалку снова, а редиректим на главную
+    navigate('/')
+  }
+
+  return (
+    <div className="room-page">
+      {/* Модалка для ввода имени пользователя */}
+      {isModalOpen && (
+        <NicknameModal
+          isOpen={isModalOpen}
+          onClose={() => navigate('/')}
+          onUserEnter={handleUserEnter}
+          roomName={roomName || ''}
+        />
+      )}
+
+      {/* LiveKit комната */}
+      {token && roomName && (
+        <LiveKitRoom
+          token={token}
+          serverUrl={import.meta.env.VITE_LIVEKIT_URL}
+          connect={true}
+          audio={true}
+          video={true}
+          onDisconnected={handleDisconnect}
+          options={{
+            adaptiveStream: true,
+            dynacast: true,
+          }}
+        >
+          <VideoConference />
+        </LiveKitRoom>
+      )}
+    </div>
+  )
+}
+
+export default RoomPage

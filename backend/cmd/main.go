@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	lksdk "github.com/livekit/server-sdk-go/v2"
 )
 
 func main() {
@@ -21,7 +22,10 @@ func main() {
 	}
 	defer pgdb.Close()
 
+	lkRoomClient := lksdk.NewRoomServiceClient(cfg.LiveKitServerURL, cfg.LiveKitApiKey, cfg.LiveKitApiSecret)
+
 	userHandler := handlers.NewUserHandler(pgdb, cfg.JwtSecret)
+	roomHandler := handlers.NewLivekitHandler(cfg.LiveKitApiKey, cfg.LiveKitApiSecret, lkRoomClient)
 
 	authMw := middlewares.NewAuthMiddleware(cfg.JwtSecret)
 
@@ -39,6 +43,9 @@ func main() {
 	api := app.Group("/api")
 	api.Post("/user", userHandler.CreateUser, authMw.RequierLogin)
 	api.Post("/login", userHandler.Authenticate)
+
+	api.Post("/room", roomHandler.CreateRoom, authMw.RequierLogin)
+	api.Post("/room/join", roomHandler.JoinRoom)
 
 	app.Listen(":3000")
 }
