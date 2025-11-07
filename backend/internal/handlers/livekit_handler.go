@@ -54,7 +54,7 @@ func (h *LivekitHandler) CreateRoom(c *fiber.Ctx) error {
 
 func (h *LivekitHandler) JoinRoom(c *fiber.Ctx) error {
 	type Request struct {
-		RoomName string `json:"room_name"`
+		RoomName string `json:"roomname"`
 		Nickname string `json:"nickname"`
 	}
 
@@ -64,6 +64,29 @@ func (h *LivekitHandler) JoinRoom(c *fiber.Ctx) error {
 			"error": "Invalid request body",
 		})
 	}
+
+	// res, err := h.lkClient.ListRooms(context.Background(), &livekit.ListRoomsRequest{})
+	// if err != nil {
+	// 	return c.Status(500).JSON(fiber.Map{
+	// 		"error": err.Error(),
+	// 	})
+	// }
+
+	// rooms := res.GetRooms()
+	// roomExists := false
+
+	// for _, room := range rooms {
+	// 	if room.Name == req.RoomName {
+	// 		roomExists = true
+	// 		break
+	// 	}
+	// }
+
+	// if !roomExists {
+	// 	return c.Status(404).JSON(fiber.Map{
+	// 		"error": "Room not found",
+	// 	})
+	// }
 
 	//TODO: Проверка на существование команты + проверка на валидность и уникальность никнейма
 

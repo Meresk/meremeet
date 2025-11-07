@@ -16,7 +16,6 @@ func NewPostgresDB(connStr, adminDefaultPass string) (*sql.DB, error) {
 	}
 
 	if err = db.Ping(); err != nil {
-		fmt.Printf("RAW ERROR: %q\n", err.Error())
 		return nil, err
 	}
 
