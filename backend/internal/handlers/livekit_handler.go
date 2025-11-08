@@ -65,6 +65,26 @@ func (h *LivekitHandler) CreateRoom(c *fiber.Ctx) error {
 	})
 }
 
+func (h *LivekitHandler) GetAllRooms(c *fiber.Ctx) error {
+	res, err := h.lkClient.ListRooms(context.Background(), &livekit.ListRoomsRequest{})
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	rooms := res.GetRooms()
+
+	var roomNames []string
+	for _, room := range rooms {
+		roomNames = append(roomNames, room.Name)
+	}
+
+	return c.JSON(fiber.Map{
+		"rooms": roomNames,
+	})
+}
+
 func (h *LivekitHandler) JoinRoom(c *fiber.Ctx) error {
 	type Request struct {
 		RoomName string `json:"roomname"`

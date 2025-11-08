@@ -61,7 +61,7 @@ const RoomPage: React.FC = () => {
         }
 
         setIsLoading(true);
-
+        
         try {
             const data = await roomService.joinRoom({
                 roomname: roomId,
@@ -83,7 +83,7 @@ const RoomPage: React.FC = () => {
     };
 
     const handleOnLeave = () => {
-        navigate(-1);
+        setToken(null);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

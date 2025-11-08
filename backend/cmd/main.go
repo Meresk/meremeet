@@ -45,6 +45,7 @@ func main() {
 	api.Post("/login", userHandler.Authenticate)
 
 	api.Post("/room", roomHandler.CreateRoom, authMw.RequierLogin)
+	api.Get("room", roomHandler.GetAllRooms, authMw.RequierLogin)
 	api.Post("/room/join", roomHandler.JoinRoom)
 
 	app.Listen(":3000")
