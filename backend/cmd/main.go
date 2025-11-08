@@ -41,11 +41,11 @@ func main() {
 	}))
 
 	api := app.Group("/api")
-	api.Post("/user", userHandler.CreateUser, authMw.RequierLogin)
+	api.Post("/user", authMw.RequireLogin, userHandler.CreateUser)
 	api.Post("/login", userHandler.Authenticate)
 
-	api.Post("/room", roomHandler.CreateRoom, authMw.RequierLogin)
-	api.Get("room", roomHandler.GetAllRooms, authMw.RequierLogin)
+	api.Post("/room", authMw.RequireLogin, roomHandler.CreateRoom)
+	api.Get("room", authMw.RequireLogin, roomHandler.GetAllRooms)
 	api.Post("/room/join", roomHandler.JoinRoom)
 
 	app.Listen(":3000")

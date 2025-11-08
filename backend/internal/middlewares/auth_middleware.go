@@ -16,7 +16,7 @@ func NewAuthMiddleware(jwtSecret string) *AuthMiddleware {
 	return &AuthMiddleware{JwtSecret: jwtSecret}
 }
 
-func (m *AuthMiddleware) RequierLogin(c *fiber.Ctx) error {
+func (m *AuthMiddleware) RequireLogin(c *fiber.Ctx) error {
 	auth := c.Get("Authorization")
 	if !strings.HasPrefix(auth, "Bearer ") {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{

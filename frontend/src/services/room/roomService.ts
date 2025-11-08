@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "../../config/constants"
+import { authStorage } from "../auth/storage";
 
 export interface JoinRoomRequest {
   roomname: string;
@@ -41,10 +42,16 @@ class RoomService {
 
   async createRoom(roomName: string): Promise<any> {
     try {
+      const authToken = authStorage.getToken();
+      if (!authToken) {
+        throw new Error('No authentication token found. Please login first.');
+      }
+
       const response = await fetch(`${API_BASE_URL}/room`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify({ name: roomName}),
       });

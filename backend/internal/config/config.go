@@ -20,12 +20,12 @@ type Config struct {
 
 func Load() *Config {
 	return &Config{
-		Port:             getEnv("PORT", "8080"),
+		Port:             getEnv("PORT", "3000"),
 		DbURL:            getEnv("DB_URL", "host=127.0.0.1 port=5432 user=yakov password=admin dbname=meremeet sslmode=disable"),
 		JwtSecret:        getEnv("JWT_SECRET", "hrqwoperyuoy32190437124yiqwuery210934y"),
 		AdminDefaultPass: getEnv("ADMIN_DEFAULT_PASSWORD", "admin"),
 		AllowOrigins:     getEnv("CORS_ALLOW_ORIGINS", "http://localhost:5173"),
-		AllowMethods:     getEnv("CORS_ALLOW_METHODS", "GET,POST,PUT,DELETE,OPTIONS"),
+		AllowMethods:     getEnv("CORS_ALLOW_METHODS", "GET,POST,PUT,DELETE"),
 		AllowHeaders:     getEnv("CORS_ALLOW_HEADERS", "Content-Type,Authorization"),
 
 		LiveKitApiKey:    getEnv("LIVEKIT_API_KEY", "devkey"),

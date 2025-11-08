@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from '../styles/UserPage.module.css';
 import CreateRoomModal from '../components/CreateRoomModal';
 import RoomListModal from '../components/RoomListModal';
@@ -9,15 +9,6 @@ function UserPage() {
     const navigate = useNavigate();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showListModal, setShowListModal] = useState(false);
-    const [userInfo, setUserInfo] = useState<{ userId: number | null; login: string | null }>({
-        userId: null,
-        login: null
-    });
-
-    useEffect(() => {
-        const userData = authService.getUserInfo();
-        setUserInfo(userData);
-    }, []);
 
     const existingRooms = [
         { id: 1, name: 'Shadow Realm', users: 3, isPrivate: true },
@@ -34,7 +25,6 @@ function UserPage() {
 
     const handleRoomCreated = (roomName: string, password?: string) => {
         console.log('Room created:', roomName, password);
-        // Здесь можно добавить логику создания комнаты
     };
 
     const handleBack = () => {
