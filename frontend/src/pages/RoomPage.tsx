@@ -99,8 +99,8 @@ const RoomPage: React.FC = () => {
     if (token) {
         return (
             <LiveKitRoom
-                video={false}
-                audio={false}
+                video={true}
+                audio={true}
                 token={token}
                 serverUrl={LIVEKIT_SERVER_URL}
                 data-lk-theme="default"

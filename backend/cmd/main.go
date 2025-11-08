@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"mere-meet/backend/internal/config"
 	"mere-meet/backend/internal/db"
@@ -48,5 +49,6 @@ func main() {
 	api.Get("room", authMw.RequireLogin, roomHandler.GetAllRooms)
 	api.Post("/room/join", roomHandler.JoinRoom)
 
-	app.Listen(":3000")
+	addr := fmt.Sprintf(":%s", cfg.Port)
+	app.Listen(addr)
 }
