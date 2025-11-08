@@ -1,0 +1,29 @@
+port: 7880
+bind_addresses:
+  - "0.0.0.0"
+
+rtc:
+  node_ip: "meremeet.ru"
+  tcp_port: 7881
+  port_range_start: 50000 # dont change this
+  port_range_end: 50100 # for ~50 users
+  use_external_ip: false
+  enable_loopback_candidate: true
+
+redis:
+  address: redis:6379
+  username: ""
+  password: ""
+  db: 0
+  use_tls: false
+
+turn:
+  enabled: false
+
+ingress:
+  rtmp_base_url: ""
+  whip_base_url: ""
+
+keys:
+  LKOIUASYD123IUASYD987512: qwlioerb12h3498b11o3rid7f6aoeb12437yhgdeqwe # example key and secret
+
