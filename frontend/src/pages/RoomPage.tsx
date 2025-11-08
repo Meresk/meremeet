@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     GridLayout,
     LiveKitRoom,
@@ -13,6 +13,7 @@ import { CustomControlBar } from "../components/livekitControls/CustomControlBar
 import { CustomChat } from "../components/livekitControls/CustomChat.tsx";
 import { ParticipantList } from "../components/livekitControls/ParticipantList.tsx";
 import { LIVEKIT_SERVER_URL } from "../config/constants.ts"
+import { roomService } from "../services/room/roomService.ts";
 import styles from '../styles/RoomPage.module.css';
 
 const RoomPage: React.FC = () => {
@@ -22,51 +23,60 @@ const RoomPage: React.FC = () => {
     const [token, setToken] = useState<string | null>(null);
     const [userName, setUserName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [hasError, setHasError] = useState(false);
+    const [validationError, setValidationError] = useState<string | null>(null);
+    const [inputError, setInputError] = useState(false);
 
-    // Управление видимостью чата
     type ActivePanel = 'chat' | 'participants' | null;
     const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+    
+    const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
+
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+        };
+    }, []);
 
     const handleJoinRoom = async (e: React.FormEvent) => {
         e.preventDefault();
         
+        setValidationError(null);
+        setInputError(false);
+
         if (!userName.trim()) {
-            setHasError(true);
+            setInputError(true);
+            setValidationError("who are you?");
             return;
         }
 
         if (!roomId) {
-            setHasError(true);
+            setValidationError("Room ID is missing");
             return;
         }
 
         setIsLoading(true);
-        setHasError(false);
 
         try {
-            const response = await fetch('http://127.0.0.1:3000/api/room/join', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    roomname: roomId,
-                    nickname: userName.trim()
-                })
+            const data = await roomService.joinRoom({
+                roomname: roomId,
+                nickname: userName.trim()
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `Ошибка сервера: ${response.status}`);
-            }
-
-            const data = await response.json();
             setToken(data.token);
             
-        } catch (error) {
-            console.error('Failed to get token:', error);
-            setHasError(true);
+        } catch (error: any) {
+            console.error('Failed to join room:', error);
+            
+            if (error.response?.status === 400) {
+                setValidationError("not this room...");
+            } else {
+                setValidationError("not this room...");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -78,12 +88,14 @@ const RoomPage: React.FC = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(e.target.value);
-        if (hasError) {
-            setHasError(false);
+        if (inputError) {
+            setInputError(false);
+        }
+        if (validationError) {
+            setValidationError(null);
         }
     };
 
-    // Если токен получен, показываем видео-комнату
     if (token) {
         return (
             <LiveKitRoom
@@ -101,22 +113,20 @@ const RoomPage: React.FC = () => {
                 }}
                 onDisconnected={handleOnLeave}
             >
-                <MyVideoConference panelVisible={activePanel} />
+                <MyVideoConference 
+                    panelVisible={activePanel} 
+                    isFullscreen={isFullscreen}
+                />
                 <RoomAudioRenderer />
 
-                <div style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    width: "100%",
-                    zIndex: 10,
-                    backgroundColor: "rgba(0,0,0,0.7)"
-                }}>
+                {!isFullscreen && (
                     <CustomControlBar
                         activePanel={activePanel}
                         setActivePanel={setActivePanel}
+                        isFullscreen={isFullscreen}
+                        onFullscreenToggle={setIsFullscreen}
                     />
-                </div>
+                )}
 
                 <CustomChat visible={activePanel === 'chat'} />
                 <ParticipantList visible={activePanel === 'participants'} />
@@ -124,11 +134,16 @@ const RoomPage: React.FC = () => {
         );
     }
 
-    // Иначе показываем экран входа
     return (
         <div className={styles.container}>
             <div className={styles.modal}>
                 <form onSubmit={handleJoinRoom} className={styles.form}>
+                    {validationError && (
+                        <div className={styles.validationError}>
+                            {validationError}
+                        </div>
+                    )}
+                    
                     <div className={styles.inputGroup}>
                         <input
                             type="text"
@@ -136,7 +151,7 @@ const RoomPage: React.FC = () => {
                             onChange={handleInputChange}
                             placeholder="nick"
                             disabled={isLoading}
-                            className={`${styles.input} ${hasError ? styles.inputError : ''}`}
+                            className={`${styles.input} ${inputError ? styles.inputError : ''}`}
                         />
                     </div>
 
@@ -149,6 +164,7 @@ const RoomPage: React.FC = () => {
                     </button>
 
                     <button 
+                        type="button"
                         onClick={() => navigate(-1)}
                         className={styles.backButton}
                     >
@@ -162,9 +178,10 @@ const RoomPage: React.FC = () => {
 
 interface MyVideoConferenceProps {
     panelVisible: string | null;
+    isFullscreen: boolean;
 }
 
-function MyVideoConference({ panelVisible }: MyVideoConferenceProps) {
+function MyVideoConference({ panelVisible, isFullscreen }: MyVideoConferenceProps) {
     const tracks = useTracks(
         [{ source: Track.Source.ScreenShare, withPlaceholder: false }],
         { onlySubscribed: false }
@@ -174,10 +191,10 @@ function MyVideoConference({ panelVisible }: MyVideoConferenceProps) {
         <GridLayout
             tracks={tracks}
             style={{
-                height: "calc(100vh - var(--lk-control-bar-height))",
+                height: isFullscreen ? "100vh" : "calc(100vh - var(--lk-control-bar-height))",
                 width: panelVisible != null ? "calc(100vw - 300px)" : "100vw",
                 marginRight: panelVisible != null ? "300px" : "0",
-                transition: "width 0.3s ease-in-out",
+                transition: "width 0.3s ease-in-out, height 0.3s ease-in-out",
             }}
         >
             <ParticipantTile />

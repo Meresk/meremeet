@@ -9,8 +9,10 @@ import {
     ScreenShare,
     Chat,
     Fullscreen,
-    FullscreenExit, SpeakerNotesOff,
-    Group, GroupOff, Folder, FolderOff
+    FullscreenExit, 
+    SpeakerNotesOff,
+    Group, 
+    GroupOff
 } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { useState } from "react";
@@ -18,13 +20,19 @@ import { useState } from "react";
 interface CustomControlBarProps {
     activePanel: 'chat' | 'participants' | null;
     setActivePanel: (panel: 'chat' | 'participants'| null) => void;
+    isFullscreen: boolean;
+    onFullscreenToggle: (isFullscreen: boolean) => void;
 }
 
-export function CustomControlBar({ activePanel, setActivePanel }: CustomControlBarProps) {
+export function CustomControlBar({ 
+    activePanel, 
+    setActivePanel, 
+    isFullscreen, 
+    onFullscreenToggle 
+}: CustomControlBarProps) {
     const room = useRoomContext();
     const [micEnabled, setMicEnabled] = useState(false);
     const [screenEnabled, setScreenEnabled] = useState(false);
-    const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
 
     const togglePanel = (panel: 'chat' | 'participants') => {
         setActivePanel(activePanel === panel ? null : panel);
@@ -50,10 +58,10 @@ export function CustomControlBar({ activePanel, setActivePanel }: CustomControlB
             elem.requestFullscreen().catch((err) => {
                 console.error(`Ошибка перехода в полноэкранный режим: ${err.message}`);
             });
-            setIsFullscreen(true);
+            onFullscreenToggle(true);
         } else {
             document.exitFullscreen();
-            setIsFullscreen(false);
+            onFullscreenToggle(false);
         }
     };
 

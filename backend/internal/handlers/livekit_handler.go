@@ -32,6 +32,19 @@ func (h *LivekitHandler) CreateRoom(c *fiber.Ctx) error {
 		})
 	}
 
+	roomExist, err := h.checkRoomExistence(req.Name)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if roomExist {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "room already exist",
+		})
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 19*time.Second)
 	defer cancel()
 
@@ -65,30 +78,31 @@ func (h *LivekitHandler) JoinRoom(c *fiber.Ctx) error {
 		})
 	}
 
-	// res, err := h.lkClient.ListRooms(context.Background(), &livekit.ListRoomsRequest{})
-	// if err != nil {
-	// 	return c.Status(500).JSON(fiber.Map{
-	// 		"error": err.Error(),
-	// 	})
-	// }
+	roomExist, err := h.checkRoomExistence(req.RoomName)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
 
-	// rooms := res.GetRooms()
-	// roomExists := false
+	if !roomExist {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "room doesn't exist",
+		})
+	}
 
-	// for _, room := range rooms {
-	// 	if room.Name == req.RoomName {
-	// 		roomExists = true
-	// 		break
-	// 	}
-	// }
+	userExist, err := h.checkParticipantExistence(req.RoomName, req.Nickname)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
 
-	// if !roomExists {
-	// 	return c.Status(404).JSON(fiber.Map{
-	// 		"error": "Room not found",
-	// 	})
-	// }
-
-	//TODO: Проверка на существование команты + проверка на валидность и уникальность никнейма
+	if userExist {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "user with this nickname already exist",
+		})
+	}
 
 	token, err := h.generateLkToken(req.RoomName, req.Nickname)
 	if err != nil {
@@ -115,4 +129,44 @@ func (h *LivekitHandler) generateLkToken(roomName, userIdentity string) (string,
 	}
 
 	return token, nil
+}
+
+func (h *LivekitHandler) checkRoomExistence(roomName string) (bool, error) {
+	res, err := h.lkClient.ListRooms(context.Background(), &livekit.ListRoomsRequest{})
+	if err != nil {
+		return false, err
+	}
+
+	rooms := res.GetRooms()
+	roomExists := false
+
+	for _, room := range rooms {
+		if room.Name == roomName {
+			roomExists = true
+			break
+		}
+	}
+
+	return roomExists, nil
+}
+
+func (h *LivekitHandler) checkParticipantExistence(roomName, participantId string) (bool, error) {
+	res, err := h.lkClient.ListParticipants(context.Background(), &livekit.ListParticipantsRequest{
+		Room: roomName,
+	})
+	if err != nil {
+		return false, err
+	}
+
+	participants := res.GetParticipants()
+	participantExists := false
+
+	for _, p := range participants {
+		if p.Identity == participantId {
+			participantExists = true
+			break
+		}
+	}
+
+	return participantExists, nil
 }

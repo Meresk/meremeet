@@ -18,15 +18,11 @@
     padding: 50px;
     max-width: 500px;
     width: 100%;
-    animation: formFloat 6s ease-in-out infinite;
+    /* Убрали общую анимацию формы */
 }
 
-@keyframes formFloat {
-    0%, 100% { transform: translateY(0px) rotate(0.5deg); }
-    50% { transform: translateY(-12px) rotate(-0.5deg); }
-}
+/* Разные анимации для каждого элемента */
 
-/* Анимации появления элементов */
 .input {
     background: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.1);
@@ -43,9 +39,18 @@
     text-align: center;
     width: 100%;
     max-width: 400px;
-    animation: inputFlyIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: 
+        inputFlyIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+        inputFloat 5s ease-in-out infinite 1s; /* Асинхронная анимация */
     opacity: 0;
     transform: translateX(-100px);
+}
+
+@keyframes inputFloat {
+    0%, 100% { transform: translateY(0px) rotate(0.3deg); }
+    25% { transform: translateY(-6px) rotate(0.5deg); }
+    50% { transform: translateY(-4px) rotate(-0.2deg); }
+    75% { transform: translateY(-8px) rotate(0.4deg); }
 }
 
 @keyframes inputFlyIn {
@@ -100,36 +105,6 @@
 
 .input:focus::placeholder {
     opacity: 0.4;
-    transform: translateX(10px);
-}
-
-.inputError {
-    border-color: #ff6b6b !important;
-    box-shadow: 
-        0 0 0 2px rgba(255, 107, 107, 0.4),
-        inset 0 4px 12px rgba(0, 0, 0, 0.25),
-        0 8px 24px rgba(0, 0, 0, 0.15) !important;
-    animation: borderPulse 0.8s ease;
-}
-
-@keyframes borderPulse {
-    0% {
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-    50% {
-        border-color: #ff6b6b;
-        box-shadow: 
-            0 0 0 3px rgba(255, 107, 107, 0.5),
-            inset 0 4px 12px rgba(0, 0, 0, 0.25),
-            0 8px 24px rgba(0, 0, 0, 0.15);
-    }
-    100% {
-        border-color: #ff6b6b;
-        box-shadow: 
-            0 0 0 2px rgba(255, 107, 107, 0.4),
-            inset 0 4px 12px rgba(0, 0, 0, 0.25),
-            0 8px 24px rgba(0, 0, 0, 0.15);
-    }
 }
 
 .submitButton {
@@ -155,9 +130,17 @@
         inset 0 2px 0 rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(15px);
     min-width: 240px;
-    animation: buttonFlyIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+    animation: 
+        buttonFlyIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards,
+        buttonFloat 6s ease-in-out infinite 0.5s; /* Асинхронная анимация */
     opacity: 0;
     transform: translateX(100px);
+}
+
+@keyframes buttonFloat {
+    0%, 100% { transform: translateY(0px) rotate(-0.2deg); }
+    33% { transform: translateY(-10px) rotate(0.3deg); }
+    66% { transform: translateY(-5px) rotate(-0.1deg); }
 }
 
 @keyframes buttonFlyIn {
@@ -227,9 +210,19 @@
         inset 0 0 12px rgba(255, 100, 100, 0.15);
     backdrop-filter: blur(12px);
     margin-top: 40px;
-    animation: backButtonFlyIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s forwards;
+    animation: 
+        backButtonFlyIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s forwards,
+        backButtonFloat 7s ease-in-out infinite 1.5s; /* Асинхронная анимация */
     opacity: 0;
     transform: translateY(80px);
+}
+
+@keyframes backButtonFloat {
+    0%, 100% { transform: translateY(0px) rotate(0.4deg); }
+    20% { transform: translateY(-7px) rotate(-0.3deg); }
+    40% { transform: translateY(-3px) rotate(0.2deg); }
+    60% { transform: translateY(-9px) rotate(0.1deg); }
+    80% { transform: translateY(-5px) rotate(-0.2deg); }
 }
 
 @keyframes backButtonFlyIn {
@@ -268,6 +261,28 @@
 
 .backButton:active {
     transform: translateY(-1px);
+}
+
+.validationError {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    letter-spacing: 1.8px;
+    background: transparent;
+    border: 1.5px solid rgba(255, 100, 100, 0.35);
+    border-radius: 16px;
+    box-shadow:
+        0 0 20px rgba(255, 100, 100, 0.2),
+        inset 0 0 12px rgba(255, 100, 100, 0.15);
+    backdrop-filter: blur(12px);
+    /* Убрана анимация покачивания для ошибки */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* === АДАПТИВНОСТЬ === */
@@ -335,9 +350,25 @@
     }
     
     /* Уменьшаем анимации для мобильных */
-    @keyframes formFloat {
-        0%, 100% { transform: translateY(0px) rotate(0.3deg); }
-        50% { transform: translateY(-8px) rotate(-0.3deg); }
+    @keyframes inputFloat {
+        0%, 100% { transform: translateY(0px) rotate(0.2deg); }
+        25% { transform: translateY(-4px) rotate(0.3deg); }
+        50% { transform: translateY(-2px) rotate(-0.1deg); }
+        75% { transform: translateY(-5px) rotate(0.2deg); }
+    }
+    
+    @keyframes buttonFloat {
+        0%, 100% { transform: translateY(0px) rotate(-0.1deg); }
+        33% { transform: translateY(-6px) rotate(0.2deg); }
+        66% { transform: translateY(-3px) rotate(-0.05deg); }
+    }
+    
+    @keyframes backButtonFloat {
+        0%, 100% { transform: translateY(0px) rotate(0.2deg); }
+        20% { transform: translateY(-4px) rotate(-0.2deg); }
+        40% { transform: translateY(-2px) rotate(0.1deg); }
+        60% { transform: translateY(-5px) rotate(0.05deg); }
+        80% { transform: translateY(-3px) rotate(-0.1deg); }
     }
 }
 

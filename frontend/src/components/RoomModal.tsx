@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from '../styles/RoomModal.module.css';
+import { useNavigate } from 'react-router-dom';
 
 interface RoomModalProps {
     isOpen: boolean;
@@ -8,6 +9,7 @@ interface RoomModalProps {
 }
 
 const RoomModal = ({ isOpen, onClose }: RoomModalProps) => {
+    const navigate = useNavigate();
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
     const [isVisible, setIsVisible] = useState(false);
@@ -30,8 +32,7 @@ const RoomModal = ({ isOpen, onClose }: RoomModalProps) => {
             return;
         }
         setRoomError('');
-        console.log('Room:', roomName, 'Password:', password);
-        // Здесь логика входа в комнату
+        navigate(`/room/${roomName.trim()}`)
     };
 
     const handleOverlayClick = (e: React.MouseEvent) => {

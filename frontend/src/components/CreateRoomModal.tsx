@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from '../styles/CreateRoomModal.module.css';
+import { roomService } from '../services/room/roomService';
 
 interface CreateRoomModalProps {
     isOpen: boolean;
@@ -12,18 +13,27 @@ function CreateRoomModal({ isOpen, onClose, onRoomCreated }: CreateRoomModalProp
     const [password, setPassword] = useState('');
     const [isCreating, setIsCreating] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!roomName.trim()) return;
 
         setIsCreating(true);
-        setTimeout(() => {
-            onRoomCreated(roomName, password || undefined);
-            setIsCreating(false);
+        
+
+        try {
+            const createdRoom = await roomService.createRoom(roomName.trim());
+
+            onRoomCreated(createdRoom.name, password || undefined);
+            
             setRoomName('');
             setPassword('');
             onClose();
-        }, 1500);
+            
+        } catch (error) {
+            console.error('Failed to create room:', error);
+        } finally {
+            setIsCreating(false);
+        }
     };
 
     if (!isOpen) return null;
