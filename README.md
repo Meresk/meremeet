@@ -1,4 +1,6 @@
-<img width="2549" height="1324" alt="image" src="https://github.com/user-attachments/assets/112c2a83-eaa2-42a6-8024-14ee01b7fb58" />
+# mere-meet - just app for meetings
+
+<img width="2550" height="1330" alt="image" src="https://github.com/user-attachments/assets/8c9ca5d0-2cd5-405d-8a24-52cd5e48e7c0" />
 
 <img width="2549" height="1331" alt="image" src="https://github.com/user-attachments/assets/d05be6a8-ba32-44a6-ad95-fcc6cfaac308" />
 
