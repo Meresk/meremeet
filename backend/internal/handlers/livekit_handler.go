@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"mere-meet/backend/internal/logger"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,10 +15,11 @@ type LivekitHandler struct {
 	apiKey    string
 	apiSecret string
 	lkClient  *lksdk.RoomServiceClient
+	logger    *logger.Logger
 }
 
-func NewLivekitHandler(apiKey, apiSecret string, lkCl *lksdk.RoomServiceClient) *LivekitHandler {
-	return &LivekitHandler{apiKey: apiKey, apiSecret: apiSecret, lkClient: lkCl}
+func NewLivekitHandler(apiKey, apiSecret string, lkCl *lksdk.RoomServiceClient, logger *logger.Logger) *LivekitHandler {
+	return &LivekitHandler{apiKey: apiKey, apiSecret: apiSecret, lkClient: lkCl, logger: logger}
 }
 
 func (h *LivekitHandler) CreateRoom(c *fiber.Ctx) error {
@@ -86,6 +88,13 @@ func (h *LivekitHandler) GetAllRooms(c *fiber.Ctx) error {
 }
 
 func (h *LivekitHandler) JoinRoom(c *fiber.Ctx) error {
+	requestLogger := c.Locals("logger").(*logger.Logger)
+	requestID := c.Locals("requestID").(string)
+	clientIP := c.Locals("clientIP").(string)
+	userAgent := c.Locals("userAgent").(string)
+
+	requestLogger.Request(requestID, "ROOM", "Starting join room")
+
 	type Request struct {
 		RoomName string `json:"roomname"`
 		Nickname string `json:"nickname"`
@@ -98,14 +107,19 @@ func (h *LivekitHandler) JoinRoom(c *fiber.Ctx) error {
 		})
 	}
 
+	requestLogger.RequestWithMeta(requestID, "ROOM", clientIP, userAgent,
+		"Join room: %s attempt for user: %s", req.RoomName, req.Nickname)
+
 	roomExist, err := h.checkRoomExistence(req.RoomName)
 	if err != nil {
+		requestLogger.Request(requestID, "ROOM", "LiveKit API getting rooms error: %v", err)
 		return c.Status(500).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "Internal server error",
 		})
 	}
 
 	if !roomExist {
+		requestLogger.Request(requestID, "ROOM", "Room not found: %s", req.RoomName)
 		return c.Status(400).JSON(fiber.Map{
 			"error": "room doesn't exist",
 		})
@@ -113,8 +127,9 @@ func (h *LivekitHandler) JoinRoom(c *fiber.Ctx) error {
 
 	userExist, err := h.checkParticipantExistence(req.RoomName, req.Nickname)
 	if err != nil {
+		requestLogger.Request(requestID, "ROOM", "LiveKit API getting participants error: %v", err)
 		return c.Status(500).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "Internal server error",
 		})
 	}
 
@@ -126,10 +141,14 @@ func (h *LivekitHandler) JoinRoom(c *fiber.Ctx) error {
 
 	token, err := h.generateLkToken(req.RoomName, req.Nickname)
 	if err != nil {
+		requestLogger.Request(requestID, "ROOM", "LiveKit API generating token error: %v", err)
 		return c.Status(500).JSON(fiber.Map{
-			"error": err.Error(),
+			"error": "Internal server error",
 		})
 	}
+
+	requestLogger.RequestWithMeta(requestID, "ROOM", clientIP, userAgent,
+		"Join room: %s succes for user: %s", req.RoomName, req.Nickname)
 
 	return c.JSON(fiber.Map{"token": token})
 }

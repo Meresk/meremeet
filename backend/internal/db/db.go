@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"mere-meet/backend/internal/logger"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func NewPostgresDB(connStr, adminDefaultPass string) (*sql.DB, error) {
+func NewPostgresDB(connStr, adminDefaultPass string, logger *logger.Logger) (*sql.DB, error) {
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		return nil, err
@@ -19,20 +20,20 @@ func NewPostgresDB(connStr, adminDefaultPass string) (*sql.DB, error) {
 		return nil, err
 	}
 
-	log.Println("(db) Successfully connected to Postgres database")
+	logger.Info("DB", "Successfully connected to Postgres database")
 
-	if err := runMigrations(db); err != nil {
+	if err := runMigrations(db, logger); err != nil {
 		return nil, err
 	}
 
-	if err := seed(db, adminDefaultPass); err != nil {
+	if err := seed(db, adminDefaultPass, logger); err != nil {
 		return nil, err
 	}
 
 	return db, nil
 }
 
-func runMigrations(db *sql.DB) error {
+func runMigrations(db *sql.DB, logger *logger.Logger) error {
 	var tableExists bool
 	err := db.QueryRow(`
 		SELECT EXISTS (
@@ -59,15 +60,15 @@ func runMigrations(db *sql.DB) error {
 			return err
 		}
 
-		log.Println("(migrations) Users table created successfully")
+		logger.Info("DB", "(migrations) Users table created successfully")
 	} else {
-		log.Println("(migrations) Users table already exists")
+		logger.Info("DB", "(migrations) Users table already exists")
 	}
 
 	return nil
 }
 
-func seed(db *sql.DB, adminDefaultPass string) error {
+func seed(db *sql.DB, adminDefaultPass string, logger *logger.Logger) error {
 	var adminExists bool
 	err := db.QueryRow(`
 		SELECT EXISTS (
@@ -80,7 +81,7 @@ func seed(db *sql.DB, adminDefaultPass string) error {
 	}
 
 	if adminExists {
-		log.Println("(seeding) Admin user already exists")
+		logger.Info("DB", "(seeding) Admin user already exists")
 		return nil
 	}
 
@@ -97,7 +98,6 @@ func seed(db *sql.DB, adminDefaultPass string) error {
 		return fmt.Errorf("(seeding) failed to create admin user: %w", err)
 	}
 
-	log.Printf("(seeding) Admin user created successfully (login: admin, password: %v)", adminDefaultPass)
-
+	logger.Info("DB", "(seeding) Admin user created successfully with params in .env")
 	return nil
 }
