@@ -14,7 +14,7 @@ import {
     Group, 
     GroupOff
 } from "@mui/icons-material";
-import { IconButton, Tooltip } from "@mui/material";
+import {IconButton, Tooltip, useTheme, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 
 interface CustomControlBarProps {
@@ -22,14 +22,17 @@ interface CustomControlBarProps {
     setActivePanel: (panel: 'chat' | 'participants'| null) => void;
     isFullscreen: boolean;
     onFullscreenToggle: (isFullscreen: boolean) => void;
+    onLeaveRoom: () => void;
 }
 
 export function CustomControlBar({ 
     activePanel, 
     setActivePanel, 
     isFullscreen, 
-    onFullscreenToggle 
+    onFullscreenToggle,
+    onLeaveRoom
 }: CustomControlBarProps) {
+
     const room = useRoomContext();
     const [micEnabled, setMicEnabled] = useState(false);
     const [screenEnabled, setScreenEnabled] = useState(false);
@@ -48,10 +51,6 @@ export function CustomControlBar({
         setScreenEnabled(!screenEnabled);
     };
 
-    const leaveRoom = () => {
-        room.disconnect();
-    };
-
     const toggleFullscreen = () => {
         const elem = document.documentElement;
         if (!document.fullscreenElement) {
@@ -64,23 +63,27 @@ export function CustomControlBar({
             onFullscreenToggle(false);
         }
     };
+    
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
         <div
             style={{
-                position: 'absolute',
+                position: 'fixed',
                 bottom: 0,
                 left: 0,
                 width: '100%',
-                backgroundColor: 'rgba(0,0,0,0.7)',
-                padding: '0.5rem 1rem',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                padding: '1rem',
+                zIndex: 1000,
             }}
         >
             <div
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
-                    gap: '1rem',
+                    gap: isMobile ? '0.75rem' : '2rem',
                     alignItems: 'center',
                 }}
             >
@@ -116,7 +119,7 @@ export function CustomControlBar({
                 </Tooltip>
 
                 <Tooltip title="Покинуть комнату">
-                    <IconButton onClick={leaveRoom} color="error">
+                    <IconButton onClick={onLeaveRoom} color="error">
                         <ExitToApp />
                     </IconButton>
                 </Tooltip>

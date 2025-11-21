@@ -1,8 +1,8 @@
 import Logo from '../assets/logomm.svg';
 import styles from '../styles/App.module.css';
 import { useState } from 'react';
-import RoomModal from '../components/RoomModal';
-import LoginModal from '../components/LoginModal';
+import RoomModal from '../components/Modals/RoomModal';
+import LoginModal from '../components/Modals/LoginModal';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth/authService';
 

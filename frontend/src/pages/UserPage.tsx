@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styles from '../styles/UserPage.module.css';
-import CreateRoomModal from '../components/CreateRoomModal';
-import RoomListModal from '../components/RoomListModal';
+import CreateRoomModal from '../components/Modals/CreateRoomModal';
+import RoomListModal from '../components/Modals/RoomListModal';
 import { authService } from '../services/auth/authService';
 import { useNavigate } from 'react-router-dom';
 

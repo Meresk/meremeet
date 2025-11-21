@@ -3,18 +3,16 @@ import {
     GridLayout,
     LiveKitRoom,
     ParticipantTile,
-    RoomAudioRenderer,
     useTracks,
 } from "@livekit/components-react";
 import "@livekit/components-styles";
 import { useParams, useNavigate } from "react-router-dom";
 import { Track } from "livekit-client";
-import { CustomControlBar } from "../components/livekitControls/CustomControlBar.tsx";
-import { CustomChat } from "../components/livekitControls/CustomChat.tsx";
-import { ParticipantList } from "../components/livekitControls/ParticipantList.tsx";
+
 import { LIVEKIT_SERVER_URL } from "../config/constants.ts"
 import { roomService } from "../services/room/roomService.ts";
 import styles from '../styles/RoomPage.module.css';
+import { RoomContent } from "../components/livekitControls/RoomContent.tsx";
 
 const RoomPage: React.FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
@@ -27,8 +25,6 @@ const RoomPage: React.FC = () => {
     const [inputError, setInputError] = useState(false);
 
     type ActivePanel = 'chat' | 'participants' | null;
-    const [activePanel, setActivePanel] = useState<ActivePanel>(null);
-    
     const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
 
     useEffect(() => {
@@ -98,39 +94,34 @@ const RoomPage: React.FC = () => {
 
     if (token) {
         return (
-            <LiveKitRoom
-                video={false}
-                audio={false}
-                token={token}
-                serverUrl={LIVEKIT_SERVER_URL}
-                data-lk-theme="default"
-                style={{
-                    height: "100vh",
-                    display: "flex",
-                    flexDirection: "row",
-                    overflow: "hidden",
-                    position: "relative",
-                }}
-                onDisconnected={handleOnLeave}
-            >
-                <MyVideoConference 
-                    panelVisible={activePanel} 
-                    isFullscreen={isFullscreen}
-                />
-                <RoomAudioRenderer />
-
-                {!isFullscreen && (
-                    <CustomControlBar
-                        activePanel={activePanel}
-                        setActivePanel={setActivePanel}
+            <div style={{ 
+            height: '100vh', 
+            width: '100vw', 
+            overflow: 'hidden',
+            position: 'relative'
+            }}>
+                <LiveKitRoom
+                    video={false}
+                    audio={false}
+                    token={token}
+                    serverUrl={LIVEKIT_SERVER_URL}
+                    data-lk-theme="default"
+                    style={{
+                        height: "100vh",
+                        width: "100vw",
+                        display: "flex",
+                        flexDirection: "row",
+                        overflow: "hidden",
+                        position: "relative",
+                    }}
+                    onDisconnected={handleOnLeave}
+                >
+                    <RoomContent
                         isFullscreen={isFullscreen}
-                        onFullscreenToggle={setIsFullscreen}
+                        onFullscreenToggle={setIsFullscreen} 
                     />
-                )}
-
-                <CustomChat visible={activePanel === 'chat'} />
-                <ParticipantList visible={activePanel === 'participants'} />
-            </LiveKitRoom>
+                </LiveKitRoom>
+            </div>
         );
     }
 
@@ -175,31 +166,5 @@ const RoomPage: React.FC = () => {
         </div>
     );
 };
-
-interface MyVideoConferenceProps {
-    panelVisible: string | null;
-    isFullscreen: boolean;
-}
-
-function MyVideoConference({ panelVisible, isFullscreen }: MyVideoConferenceProps) {
-    const tracks = useTracks(
-        [{ source: Track.Source.ScreenShare, withPlaceholder: false }],
-        { onlySubscribed: false }
-    );
-
-    return (
-        <GridLayout
-            tracks={tracks}
-            style={{
-                height: isFullscreen ? "100vh" : "calc(100vh - var(--lk-control-bar-height))",
-                width: panelVisible != null ? "calc(100vw - 300px)" : "100vw",
-                marginRight: panelVisible != null ? "300px" : "0",
-                transition: "width 0.3s ease-in-out, height 0.3s ease-in-out",
-            }}
-        >
-            <ParticipantTile />
-        </GridLayout>
-    );
-}
 
 export default RoomPage;

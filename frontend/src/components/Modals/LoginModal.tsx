@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import styles from '../styles/LoginModal.module.css';
-import { authService } from '../services/auth/authService';
+import styles from '../../styles/LoginModal.module.css';
+import { authService } from '../../services/auth/authService';
 
 interface LoginModalProps {
     isOpen: boolean;
