@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
-    GridLayout,
     LiveKitRoom,
-    ParticipantTile,
-    useTracks,
 } from "@livekit/components-react";
 import "@livekit/components-styles";
 import { useParams, useNavigate } from "react-router-dom";
-import { Track } from "livekit-client";
 
 import { LIVEKIT_SERVER_URL } from "../config/constants.ts"
 import { roomService } from "../services/room/roomService.ts";
@@ -24,7 +20,6 @@ const RoomPage: React.FC = () => {
     const [validationError, setValidationError] = useState<string | null>(null);
     const [inputError, setInputError] = useState(false);
 
-    type ActivePanel = 'chat' | 'participants' | null;
     const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
 
     useEffect(() => {
