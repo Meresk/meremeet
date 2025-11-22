@@ -1,7 +1,7 @@
 import Logo from '../assets/logomm.svg';
 import styles from '../styles/App.module.css';
 import { useState } from 'react';
-import RoomModal from '../components/Modals/RoomModal';
+import RoomModal from '../components/Modals/EnterRoomModal';
 import LoginModal from '../components/Modals/LoginModal';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth/authService';
@@ -28,7 +28,6 @@ function HomePage() {
         setIsLoginModalOpen(false);
     };
 
-    // Функции для навигации
     const handleRoomEnter = (roomId: string) => {
         navigate(`/room/${roomId}`);
     };
@@ -47,7 +46,7 @@ function HomePage() {
                 <img src={Logo} alt="Logo" className={styles.logo}/>
             </div>
 
-            {/* Передаем функции в модальные окна */}
+            {/* Модальные окна*/}
             <RoomModal 
                 isOpen={isRoomModalOpen} 
                 onClose={handleCloseModal}

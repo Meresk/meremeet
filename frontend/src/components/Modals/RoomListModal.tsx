@@ -1,19 +1,53 @@
-import styles from '../../styles/RoomListModal.module.css';
+import { useState, useEffect } from 'react';
+import styles from '../../styles/modals/RoomListModal.module.css';
+import { roomService } from '../../services/room/roomService';
 
 interface Room {
-    id: number;
     name: string;
-    users: number;
-    isPrivate: boolean;
+    participants: number;
+    creationTime: number;
 }
 
 interface RoomListModalProps {
     isOpen: boolean;
     onClose: () => void;
-    rooms: Room[];
 }
 
-function RoomListModal({ isOpen, onClose, rooms }: RoomListModalProps) {
+function RoomListModal({ isOpen, onClose }: RoomListModalProps) {
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchRooms();
+        }
+    }, [isOpen]);
+
+    const fetchRooms = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const roomsData = await roomService.getAllRooms();
+            setRooms(roomsData);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to load rooms');
+            console.error('Failed to fetch rooms:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const formatCreationTime = (timestamp: number) => {
+        return new Date(timestamp * 1000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -27,26 +61,52 @@ function RoomListModal({ isOpen, onClose, rooms }: RoomListModalProps) {
                 </button>
 
                 <div className={styles.header}>
-                    <div className={styles.roomsCount}>{rooms.length}</div>
+                    <div className={styles.roomsCount}>
+                        {loading ? '...' : rooms.length}
+                    </div>
                     <h2 className={styles.title}>.mere-list</h2>
                 </div>
 
-                <div className={styles.roomsList}>
-                    {rooms.map(room => (
-                        <div 
-                            key={room.id} 
-                            className={`${styles.roomItem} ${room.isPrivate ? styles.private : ''}`}
+                {loading && (
+                    <div className={styles.loading}>
+                        Loading rooms...
+                    </div>
+                )}
+
+                {error && (
+                    <div className={styles.error}>
+                        <div>{error}</div>
+                        <button 
+                            onClick={fetchRooms} 
+                            className={styles.retryButton}
                         >
-                            <div className={styles.roomInfo}>
-                                <span className={styles.roomName}>{room.name}</span>
-                                {room.isPrivate && <div className={styles.lockIcon}>⌖</div>}
-                            </div>
-                            <div className={styles.roomUsers}>
-                                {room.users}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                            Try Again
+                        </button>
+                    </div>
+                )}
+
+                {!loading && !error && (
+                    <div className={styles.roomsList}>
+                        {(
+                            rooms.map(room => (
+                                <div 
+                                    key={room.name} 
+                                    className={`${styles.roomItem}`}
+                                >
+                                    <div className={styles.roomInfo}>
+                                        <span className={styles.roomName}>{room.name}</span>
+                                        <div className={styles.roomMeta}>
+                                            Created: {formatCreationTime(room.creationTime)}
+                                        </div>
+                                    </div>
+                                    <div className={styles.roomUsers}>
+                                        {room.participants}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

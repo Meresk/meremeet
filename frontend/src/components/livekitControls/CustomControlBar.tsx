@@ -14,7 +14,7 @@ import {
     Group, 
     GroupOff
 } from "@mui/icons-material";
-import { IconButton, Tooltip, useTheme, useMediaQuery, Box } from "@mui/material";
+import { IconButton, Tooltip, useTheme, useMediaQuery, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 
 interface CustomControlBarProps {
@@ -102,32 +102,32 @@ export function CustomControlBar({
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    gap: isMobile ? '0.75rem' : '2rem',
+                    gap: isMobile ? '0.7rem' : '2rem',
                 }}
             >
                 {/* Таймер*/}
-                <Box
+                <Typography
                     sx={{
                         color: 'white',
-                        fontSize: isMobile ? '14px' : '16px',
+                        fontSize: isMobile ? '11px' : '16px',
                         fontWeight: '500',
-                        minWidth: isMobile ? '50px' : '60px',
+                        minWidth: isMobile ? '60px' : '60px',
                         textAlign: 'center',
                         fontFamily: 'monospace',
                         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        padding: '4px 8px',
+                        padding: '4px',
                         borderRadius: '4px',
                     }}
                 >
                     {formatTime(timer)}
-                </Box>
+                </Typography>
 
                 {/* Кнопки управления */}
                 <div
                     style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        gap: isMobile ? '0.75rem' : '2rem',
+                        gap: isMobile ? '0.9rem' : '2rem',
                         alignItems: 'center',
                         flex: 1,
                     }}

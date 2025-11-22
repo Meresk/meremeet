@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from '../../styles/LoginModal.module.css';
+import styles from '../../styles/modals/LoginModal.module.css';
 import { authService } from '../../services/auth/authService';
 
 interface LoginModalProps {

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/nf.svg';
-import styles from '../styles/NotFound.module.css';
+import styles from '../styles/pages/NotFoundPage.module.css';
 
 function NotFound() {
     const navigate = useNavigate();
