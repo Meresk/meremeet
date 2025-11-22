@@ -7,7 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { LIVEKIT_SERVER_URL } from "../config/constants.ts"
 import { roomService } from "../services/room/roomService.ts";
-import styles from '../styles/RoomPage.module.css';
+import styles from '../styles/pages/RoomPage.module.css';
 import { RoomContent } from "../components/livekitControls/RoomContent.tsx";
 
 const RoomPage: React.FC = () => {

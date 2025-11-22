@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from '../../styles/CreateRoomModal.module.css';
+import styles from '../../styles/modals/CreateRoomModal.module.css';
 import { roomService } from '../../services/room/roomService';
 
 interface CreateRoomModalProps {

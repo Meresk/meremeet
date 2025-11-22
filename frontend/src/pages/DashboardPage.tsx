@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from '../styles/DashboardPage.module.css';
+import styles from '../styles/pages/DashboardPage.module.css';
 import CreateRoomModal from '../components/Modals/CreateRoomModal';
 import RoomListModal from '../components/Modals/RoomListModal';
 import { authService } from '../services/auth/authService';

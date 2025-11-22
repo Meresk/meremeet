@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from '../../styles/RoomModal.module.css';
+import styles from '../../styles/modals/EnterRoomModal.module.css';
 import { useNavigate } from 'react-router-dom';
 
 interface RoomModalProps {
