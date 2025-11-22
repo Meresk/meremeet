@@ -68,8 +68,15 @@ export function CustomControlBar({
     };
 
     const toggleScreen = async () => {
-        await room.localParticipant.setScreenShareEnabled(!screenEnabled);
-        setScreenEnabled(!screenEnabled);
+        try {
+            await room.localParticipant.setScreenShareEnabled(!screenEnabled, {
+                audio: true,
+            });
+
+            setScreenEnabled(!screenEnabled);
+        } catch (err) {
+            console.error("Failed to toggle screen share:", err);
+        }
     };
 
     const toggleFullscreen = () => {
