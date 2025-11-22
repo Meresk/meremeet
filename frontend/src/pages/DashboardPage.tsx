@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from '../styles/UserPage.module.css';
+import styles from '../styles/DashboardPage.module.css';
 import CreateRoomModal from '../components/Modals/CreateRoomModal';
 import RoomListModal from '../components/Modals/RoomListModal';
 import { authService } from '../services/auth/authService';
@@ -9,19 +9,6 @@ function UserPage() {
     const navigate = useNavigate();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showListModal, setShowListModal] = useState(false);
-
-    const existingRooms = [
-        { id: 1, name: 'Shadow Realm', users: 3, isPrivate: true },
-        { id: 2, name: 'Digital Abyss', users: 8, isPrivate: false },
-        { id: 3, name: 'Neon Void', users: 1, isPrivate: true },
-        { id: 4, name: 'Cyber Sanctuary', users: 5, isPrivate: false },
-        { id: 5, name: 'Data Stream', users: 12, isPrivate: false },
-        { id: 1, name: 'Shadow Realm', users: 3, isPrivate: true },
-        { id: 2, name: 'Digital Abyss', users: 8, isPrivate: false },
-        { id: 3, name: 'Neon Void', users: 1, isPrivate: true },
-        { id: 4, name: 'Cyber Sanctuary', users: 5, isPrivate: false },
-        { id: 5, name: 'Data Stream', users: 12, isPrivate: false },
-    ];
 
     const handleRoomCreated = (roomName: string, password?: string) => {
         console.log('Room created:', roomName, password);
@@ -68,7 +55,6 @@ function UserPage() {
             <RoomListModal 
                 isOpen={showListModal}
                 onClose={() => setShowListModal(false)}
-                rooms={existingRooms}
             />
 
             {/* Фоновые элементы */}

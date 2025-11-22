@@ -10,6 +10,16 @@ export interface JoinRoomResponse {
   token: string;
 }
 
+export interface Room {
+    name: string;
+    participants: number;
+    creationTime: number;
+}
+
+export interface GetAllRoomsResponse {
+    rooms: Room[];
+}
+
 export interface ApiError {
   error: string;
   message?: string;
@@ -64,6 +74,33 @@ class RoomService {
       return await response.json();
     } catch (error) {
       console.error('RoomService: Failed to create room:', error);
+      throw error;
+    }
+  }
+
+  async getAllRooms(): Promise<Room[]> {
+    try {
+      const authToken = authStorage.getToken();
+      if (!authToken) {
+        throw new Error('No authentication token found. Please login first.');
+      }
+
+      const response = await fetch(`${API_BASE_URL}/room`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData: ApiError = await response.json();
+        throw new Error(errorData.error || `Server error: ${response.status}`);
+      }
+
+      const data: GetAllRoomsResponse = await response.json();
+      return data.rooms;
+    } catch (error) {
+      console.error('RoomService: Failed to get rooms:', error);
       throw error;
     }
   }

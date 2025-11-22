@@ -75,15 +75,23 @@ func (h *LivekitHandler) GetAllRooms(c *fiber.Ctx) error {
 		})
 	}
 
-	rooms := res.GetRooms()
+	type RoomResponse struct {
+		Name         string `json:"name"`
+		Participants uint32 `json:"participants"`
+		CreationTime int64  `json:"creationTime"`
+	}
 
-	var roomNames []string
-	for _, room := range rooms {
-		roomNames = append(roomNames, room.Name)
+	rooms := make([]RoomResponse, 0, len(res.Rooms))
+	for _, room := range res.Rooms {
+		rooms = append(rooms, RoomResponse{
+			Name:         room.Name,
+			Participants: room.NumParticipants,
+			CreationTime: room.CreationTime,
+		})
 	}
 
 	return c.JSON(fiber.Map{
-		"rooms": roomNames,
+		"rooms": rooms,
 	})
 }
 

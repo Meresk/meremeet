@@ -1,6 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import UserPage from './pages/UserPage';
+import UserPage from './pages/DashboardPage';
 import RoomPage from './pages/RoomPage';
 import NotFound from './pages/NotFound';
 import { DefaultBackground, DarkBackground } from './components/Background/Backgrounds';

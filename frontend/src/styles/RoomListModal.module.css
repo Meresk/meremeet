@@ -60,7 +60,8 @@
     border-radius: 28px;
     padding: 2.5rem;
     width: 100%;
-    max-width: 520px;
+    max-width: 580px;
+    min-height: 400px;
     max-height: 85vh;
     position: relative;
     transform: scale(0.8) translateY(30px) rotateX(10deg);
@@ -196,16 +197,18 @@
     left: 0;
 }
 
+/* === УЛУЧШЕННЫЙ КОНТЕЙНЕР СПИСКА === */
 .roomsList {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    flex: 1;
+    display: block;
+    gap: 1rem;
+    height: auto;
+    min-height: 200px;
+    max-height: 60vh;
     overflow-y: auto;
     opacity: 0;
     animation: listAppear 0.5s ease 0.4s forwards;
     margin: 0 -0.5rem;
-    padding: 0 0.5rem 0.5rem;
+    padding: 0.5rem 0.5rem 0.5rem;
 }
 
 @keyframes listAppear {
@@ -224,28 +227,44 @@
     display: none;
 }
 
+/* === УЛУЧШЕННЫЕ КАРТОЧКИ КОМНАТ === */
 .roomItem {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.4rem;
+    align-items: flex-start;
+    padding: 1.4rem 1.6rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
+    border-radius: 20px;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     backdrop-filter: blur(10px);
     cursor: pointer;
-    margin: 0 0.2rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.roomItem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
 }
 
 .roomItem:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-3px);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+        0 12px 24px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(110, 130, 255, 0.1);
 }
 
 .roomItem:active {
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.01);
     transition: all 0.1s ease;
 }
 
@@ -257,24 +276,34 @@
 .roomItem.private:hover {
     border-color: rgba(255, 165, 0, 0.6);
     background: rgba(255, 165, 0, 0.12);
+    box-shadow: 
+        0 12px 24px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(255, 165, 0, 0.15);
 }
 
 .roomInfo {
     display: flex;
-    align-items: center;
-    gap: 0.8rem;
+    flex-direction: column;
+    gap: 0.6rem;
     flex: 1;
     min-width: 0;
 }
 
+.roomHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
 .roomName {
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+    font-size: 1.1rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     transition: color 0.3s ease;
+    letter-spacing: -0.2px;
 }
 
 .roomItem:hover .roomName {
@@ -283,28 +312,137 @@
 
 .lockIcon {
     color: rgba(255, 165, 0, 0.9);
-    font-size: 0.9rem;
+    font-size: 1rem;
     flex-shrink: 0;
     transition: all 0.3s ease;
+    font-weight: bold;
 }
 
 .roomItem:hover .lockIcon {
     color: rgba(255, 165, 0, 1);
-    transform: scale(1.1);
+    transform: scale(1.2);
+}
+
+.roomMeta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.roomCreation {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.roomParticipants {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    font-weight: 500;
 }
 
 .roomUsers {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    font-weight: 600;
     flex-shrink: 0;
-    margin-left: 0.5rem;
+    margin-left: 1rem;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    min-width: 60px;
+    justify-content: center;
 }
 
 .roomItem:hover .roomUsers {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.15);
     transform: scale(1.05);
+}
+
+/* === СОСТОЯНИЯ ЗАГРУЗКИ И ОШИБОК === */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    color: rgba(255, 255, 255, 0.7);
+    gap: 1rem;
+    min-height: 200px;
+}
+
+.loading::after {
+    content: '';
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    color: rgba(255, 107, 107, 0.9);
+    text-align: center;
+    gap: 1.5rem;
+    min-height: 200px;
+}
+
+.retryButton {
+    padding: 0.7rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+}
+
+.retryButton:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    gap: 1rem;
+    min-height: 200px;
+}
+
+.emptyState::before {
+    content: '🏠';
+    font-size: 2rem;
+    opacity: 0.5;
 }
 
 /* === АДАПТИВНОСТЬ === */
@@ -318,7 +456,8 @@
         padding: 2rem;
         border-radius: 24px;
         max-height: 90vh;
-        max-width: 480px;
+        max-width: 500px;
+        min-height: 350px;
     }
     
     .title {
@@ -332,18 +471,23 @@
     }
     
     .roomItem {
-        padding: 1rem 1.2rem;
+        padding: 1.2rem 1.4rem;
         margin: 0 0.1rem;
     }
     
     .roomName {
-        font-size: 0.95rem;
+        font-size: 1.05rem;
     }
     
     .roomsCount {
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
         min-width: 36px;
+    }
+    
+    .roomUsers {
+        min-width: 55px;
+        padding: 0.4rem 0.7rem;
     }
 }
 
@@ -355,7 +499,8 @@
     .modal {
         padding: 1.5rem;
         border-radius: 20px;
-        max-width: 400px;
+        max-width: 420px;
+        min-height: 320px;
     }
     
     .title {
@@ -377,8 +522,8 @@
     }
     
     .roomItem {
-        padding: 0.9rem 1rem;
-        border-radius: 14px;
+        padding: 1rem 1.2rem;
+        border-radius: 16px;
         margin: 0;
     }
     
@@ -390,15 +535,23 @@
     }
     
     .roomInfo {
-        gap: 0.6rem;
+        gap: 0.5rem;
     }
     
     .roomName {
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
     
     .roomUsers {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
+        min-width: 50px;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .roomMeta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
     }
 }
 
@@ -406,6 +559,7 @@
     .modal {
         padding: 1.2rem;
         max-width: 320px;
+        min-height: 300px;
     }
     
     .title {
@@ -425,17 +579,23 @@
     }
     
     .roomItem {
-        padding: 0.8rem;
+        padding: 0.9rem 1rem;
     }
     
     .roomName {
-        font-size: 0.85rem;
+        font-size: 0.95rem;
+    }
+    
+    .roomUsers {
+        min-width: 45px;
+        padding: 0.25rem 0.5rem;
     }
 }
 
 @media (max-height: 600px) {
     .modal {
         max-height: 95vh;
+        min-height: 350px;
     }
     
     .roomsList {
@@ -451,6 +611,7 @@
     
     .modal {
         max-height: 95vh;
+        min-height: 300px;
         margin: 10px 0;
         padding: 1.5rem;
     }
@@ -460,18 +621,19 @@
     }
     
     .roomsList {
-        gap: 0.6rem;
+        gap: 0.8rem;
         max-height: 70vh;
     }
     
     .roomItem {
-        padding: 0.7rem 1rem;
+        padding: 1rem 1.2rem;
     }
 }
 
 @media (max-height: 400px) {
     .modal {
         padding: 1rem;
+        min-height: 280px;
     }
     
     .title {
@@ -491,7 +653,7 @@
     }
     
     .roomItem {
-        padding: 0.6rem 0.8rem;
+        padding: 0.8rem 1rem;
     }
     
     .roomsCount {
