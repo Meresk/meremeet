@@ -10,8 +10,8 @@ import { Track } from "livekit-client";
 
 import { LeaveRoomModal } from "../Modals/LeaveRoomModal";
 import { CustomControlBar } from "./CustomControlBar.tsx";
-import { ParticipantList } from "./ParticipantList.tsx";
-import { CustomChat } from "./CustomChat.tsx";
+import { ParticipantList } from "./ParticipantListElement.tsx";
+import { CustomChat } from "./CustomChatElement.tsx";
 
 interface RoomContentProps {
     isFullscreen: boolean;
