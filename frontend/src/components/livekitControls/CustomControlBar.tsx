@@ -34,6 +34,8 @@ export function CustomControlBar({
 }: CustomControlBarProps) {
     const room = useRoomContext();
     const [micEnabled, setMicEnabled] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
     const [screenEnabled, setScreenEnabled] = useState(false);
     const [timer, setTimer] = useState(0);
 
@@ -48,7 +50,6 @@ export function CustomControlBar({
 
         return () => clearInterval(interval);
     }, []);
-
     // Форматирование времени в HH:MM:SS
     const formatTime = (seconds: number) => {
         const hours = Math.floor(seconds / 3600);
@@ -58,15 +59,26 @@ export function CustomControlBar({
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
+
     const togglePanel = (panel: 'chat' | 'participants') => {
         setActivePanel(activePanel === panel ? null : panel);
     };
 
+
+    // микрофон
     const toggleMic = () => {
         room.localParticipant.setMicrophoneEnabled(!micEnabled);
         setMicEnabled(!micEnabled);
+
+        if (!micEnabled) {
+            startVoiceDetection();
+        } else {
+            stopVoiceDetection();
+        }
     };
 
+
+    // трансляция
     const toggleScreen = async () => {
         try {
             await room.localParticipant.setScreenShareEnabled(!screenEnabled, {
@@ -79,6 +91,8 @@ export function CustomControlBar({
         }
     };
 
+
+    // стрим на полный экран
     const toggleFullscreen = () => {
         const elem = document.documentElement;
         if (!document.fullscreenElement) {
@@ -89,6 +103,47 @@ export function CustomControlBar({
         } else {
             document.exitFullscreen();
             onFullscreenToggle(false);
+        }
+    };
+
+
+    // индикатор голоса
+    const startVoiceDetection = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            setAudioStream(stream);
+
+            const audioContext = new AudioContext();
+            const source = audioContext.createMediaStreamSource(stream);
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 512;
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            source.connect(analyser);
+
+            const checkVolume = () => {
+                analyser.getByteFrequencyData(dataArray);
+
+                // Средний уровень громкости
+                const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+                const speaking = avg > 20;
+
+                setIsSpeaking(speaking);
+
+                requestAnimationFrame(checkVolume);
+            };
+
+            checkVolume();
+        } catch (err) {
+            console.error("Ошибка доступа к микрофону:", err);
+        }
+    };
+    const stopVoiceDetection = () => {
+        if (audioStream) {
+            audioStream.getTracks().forEach(t => t.stop());
+            setAudioStream(null);
+            setIsSpeaking(false);
         }
     };
 
@@ -139,15 +194,34 @@ export function CustomControlBar({
                         flex: 1,
                     }}
                 >
-                    <Tooltip title={micEnabled ? "Выключить микрофон" : "Включить микрофон"}>
-                        <IconButton 
-                            onClick={toggleMic} 
-                            color="primary"
-                            size={isMobile ? "small" : "medium"}
-                        >
-                            {micEnabled ? <Mic /> : <MicOff />}
-                        </IconButton>
-                    </Tooltip>
+                    
+                    <div style={{ position: "relative" }}>
+                        <Tooltip title={micEnabled ? "Выключить микрофон" : "Включить микрофон"}>
+                            <IconButton
+                                onClick={toggleMic}
+                                color="primary"
+                                size={isMobile ? "small" : "medium"}
+                            >
+                                {micEnabled ? <Mic /> : <MicOff />}
+                            </IconButton>
+                        </Tooltip>
+
+                        {/* Индикатор активности */}
+                        {micEnabled && (
+                            <span
+                                style={{
+                                    position: "absolute",
+                                    bottom: -1,
+                                    left: "40%",
+                                    width: "20%",
+                                    height: 3,
+                                    borderRadius: 3,
+                                    backgroundColor: isSpeaking ? "rgba(0, 255, 174, 0.69)" : "rgba(255,255,255,0.2)",
+                                    transition: "background-color 0.15s",
+                                }}
+                            />
+                        )}
+                    </div>
 
                     <Tooltip title={screenEnabled ? "Остановить демонстрацию экрана" : "Поделиться экраном"}>
                         <IconButton 
