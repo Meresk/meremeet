@@ -9,57 +9,71 @@ interface ParticipantListProps {
 export const ParticipantList: React.FC<ParticipantListProps> = ({ visible }) => {
     const participants = useParticipants();
 
-    if (!visible) return null;
-
     return (
         <div
             style={{
                 position: "absolute",
-                right: "0px",
-                top: "8px",
+                right: 0,
+                top: 8,
                 bottom: "calc(var(--lk-control-bar-height) + 8px)",
-                width: "300px",
-                backgroundColor: "#1e1e1e",
-                color: "#f1f1f1",
+                width: "170px",
+                padding: "0",
+                backdropFilter: "blur(14px)",
+                background: "rgba(20, 20, 20, 0.45)",
+                borderRadius: "14px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.35)",
+
                 display: "flex",
                 flexDirection: "column",
-                zIndex: 5,
-                borderRadius: "12px",
-                boxShadow: "0 0 15px rgba(0,0,0,0.5)",
-                overflow: "hidden",
+                color: "white",
+
+                transform: visible ? "translateX(0)" : "translateX(110%)",
+                opacity: visible ? 1 : 0,
+                transition: "transform 0.28s ease, opacity 0.28s ease",
+
+                pointerEvents: visible ? "auto" : "none",
+                zIndex: 10,
             }}
         >
             <div
                 style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    padding: "10px",
+                    padding: "12px 16px",
+                    fontWeight: 500,
+                    fontSize: "0.95rem",
+                    borderBottom: "1px solid rgba(255,255,255,0.06)",
                 }}
             >
-                {participants.length === 0 ? (
-                    <div style={{ fontStyle: "italic", color: "#999" }}>
-                        Участников нет
+                Участники — {participants.length}
+            </div>
+
+            <div
+                style={{
+                    flex: 1,
+                    overflowY: "auto",
+                    padding: "10px 0",
+                }}
+            >
+                {participants.map((p) => (
+                    <div
+                        key={p.sid}
+                        style={{
+                            padding: "10px 14px",
+                            margin: "4px 10px",
+                            borderRadius: "10px",
+
+                            // мягкие карточки в стиле FaceTime / macOS
+                            background: "rgba(255, 255, 255, 0.05)",
+                            backdropFilter: "blur(4px)",
+
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                        }}
+                    >
+                        <Person style={{ color: "#38d474", opacity: 0.9 }} />
+                        <span>{p.identity}</span>
                     </div>
-                ) : (
-                    participants.map((participant) => (
-                        <div
-                            key={participant.sid}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                padding: "10px",
-                                borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                                fontSize: "0.95rem",
-                                gap: "10px",
-                            }}
-                        >
-                            <Person style={{ color: "#2ecc71" }} />
-                            <span style={{ wordBreak: "break-word", flex: 1 }}>
-                                {participant.identity}
-                            </span>
-                        </div>
-                    ))
-                )}
+                ))}
             </div>
         </div>
     );

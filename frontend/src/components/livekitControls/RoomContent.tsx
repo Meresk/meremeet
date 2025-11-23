@@ -63,7 +63,7 @@ interface MyVideoConferenceProps {
     isFullscreen: boolean;
 }
 
-function MyVideoConference({ panelVisible, isFullscreen }: MyVideoConferenceProps) {
+function MyVideoConference({ isFullscreen }: MyVideoConferenceProps) {
     const tracks = useTracks(
         [{ source: Track.Source.ScreenShare, withPlaceholder: false }],
         { onlySubscribed: false }
@@ -73,10 +73,12 @@ function MyVideoConference({ panelVisible, isFullscreen }: MyVideoConferenceProp
         <GridLayout
             tracks={tracks}
             style={{
-                height: isFullscreen ? "100vh" : "calc(100vh - var(--lk-control-bar-height))",
-                width: panelVisible != null ? "calc(100vw - 300px)" : "100vw",
-                marginRight: panelVisible != null ? "300px" : "0",
-                transition: "width 0.3s ease-in-out, height 0.3s ease-in-out",
+                height: isFullscreen
+                    ? "100vh"
+                    : "calc(100vh - var(--lk-control-bar-height))",
+                width: "100vw",
+                transition: "height 0.3s ease-in-out",
+                position: "relative",
             }}
         >
             <ParticipantTile />

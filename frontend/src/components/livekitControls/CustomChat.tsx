@@ -107,8 +107,8 @@ export const CustomChat: React.FC<CustomChatProps> = ({ visible }) => {
                             padding: "6px 8px",
                             backgroundColor: "rgba(255, 255, 255, 0.1)",
                             borderRadius: "6px",
-                            wordBreak: "break-word", // ключевая строка!
-                            maxWidth: "100%", // ограничивает ширину в пределах контейнера
+                            wordBreak: "break-word", 
+                            maxWidth: "100%", 
                             overflowWrap: "break-word",
                             fontSize: "0.9rem",
                             lineHeight: "1.4",
