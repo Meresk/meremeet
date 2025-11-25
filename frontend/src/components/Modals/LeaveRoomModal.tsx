@@ -67,7 +67,6 @@ export function LeaveRoomModal({ open, onClose, onConfirm }: LeaveRoomModalProps
 
     useEffect(() => {
         if (open && leaveButtonRef.current) {
-            // Даем небольшую задержку для корректного фокуса
             const timer = setTimeout(() => {
                 leaveButtonRef.current?.focus();
             }, 100);
@@ -103,7 +102,7 @@ export function LeaveRoomModal({ open, onClose, onConfirm }: LeaveRoomModalProps
             aria-describedby="leave-dialog-description"
         >
             <DialogHeader id="leave-dialog-title">
-                go out?
+                are u sure?
             </DialogHeader>
             
             <DialogFooter>

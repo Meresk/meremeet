@@ -16,7 +16,7 @@ export const ParticipantList: React.FC<ParticipantListProps> = ({ visible }) => 
                 right: 0,
                 top: 8,
                 bottom: "calc(var(--lk-control-bar-height) + 8px)",
-                width: "170px",
+                width: "200px",
                 padding: "0",
                 backdropFilter: "blur(14px)",
                 background: "rgba(20, 20, 20, 0.45)",
@@ -41,15 +41,17 @@ export const ParticipantList: React.FC<ParticipantListProps> = ({ visible }) => 
                     fontWeight: 500,
                     fontSize: "0.95rem",
                     borderBottom: "1px solid rgba(255,255,255,0.06)",
+                    flexShrink: 0,
                 }}
             >
-                Участники — {participants.length}
+                Partakers — {participants.length}
             </div>
 
             <div
                 style={{
                     flex: 1,
                     overflowY: "auto",
+                    overflowX: "hidden",
                     padding: "10px 0",
                 }}
             >
@@ -61,17 +63,28 @@ export const ParticipantList: React.FC<ParticipantListProps> = ({ visible }) => 
                             margin: "4px 10px",
                             borderRadius: "10px",
 
-                            // мягкие карточки в стиле FaceTime / macOS
                             background: "rgba(255, 255, 255, 0.05)",
                             backdropFilter: "blur(4px)",
 
                             display: "flex",
                             alignItems: "center",
                             gap: "12px",
+                            minWidth: 0,
                         }}
                     >
-                        <Person style={{ color: "#38d474", opacity: 0.9 }} />
-                        <span>{p.identity}</span>
+                        <Person style={{ color: "#38d4b7ff", opacity: 0.9 }} />
+                        <span
+                            style={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                minWidth: 0, 
+                                flex: 1, 
+                            }}
+                            title={p.identity} 
+                        >
+                            {p.identity}
+                        </span>
                     </div>
                 ))}
             </div>
