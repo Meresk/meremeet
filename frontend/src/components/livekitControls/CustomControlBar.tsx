@@ -196,7 +196,7 @@ export function CustomControlBar({
                 >
                     
                     <div style={{ position: "relative" }}>
-                        <Tooltip title={micEnabled ? "Выключить микрофон" : "Включить микрофон"}>
+                        <Tooltip title={micEnabled ? "turn off mic" : "turn on mic"}>
                             <IconButton
                                 onClick={toggleMic}
                                 color="primary"
@@ -223,7 +223,7 @@ export function CustomControlBar({
                         )}
                     </div>
 
-                    <Tooltip title={screenEnabled ? "Остановить демонстрацию экрана" : "Поделиться экраном"}>
+                    <Tooltip title={screenEnabled ? "stop stream" : "start stream"}>
                         <IconButton 
                             onClick={toggleScreen} 
                             color="primary"
@@ -233,7 +233,7 @@ export function CustomControlBar({
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title={activePanel === 'chat' ? "Скрыть чат" : "Показать чат"}>
+                    <Tooltip title={activePanel === 'chat' ? "hide chat" : "reveal chat"}>
                         <IconButton 
                             onClick={() => togglePanel('chat')} 
                             color="primary"
@@ -243,7 +243,7 @@ export function CustomControlBar({
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title={activePanel === 'participants' ? "Скрыть участников" : "Показать участников"}>
+                    <Tooltip title={activePanel === 'participants' ? "hide partakers" : "reveal partakers"}>
                         <IconButton 
                             onClick={() => togglePanel('participants')} 
                             color="primary"
@@ -253,7 +253,7 @@ export function CustomControlBar({
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title={isFullscreen ? "Выход из полного экрана" : "Полный экран"}>
+                    <Tooltip title={isFullscreen ? "exit full sceen" : "full sceen"}>
                         <IconButton 
                             onClick={toggleFullscreen} 
                             color="primary"
@@ -265,7 +265,7 @@ export function CustomControlBar({
                 </div>
 
                 {/* Кнопка выхода справа */}
-                <Tooltip title="Покинуть комнату">
+                <Tooltip title="egress">
                     <IconButton 
                         onClick={onLeaveRoom} 
                         color="error"
