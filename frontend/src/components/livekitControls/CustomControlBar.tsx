@@ -23,6 +23,8 @@ interface CustomControlBarProps {
     isFullscreen: boolean;
     onFullscreenToggle: (isFullscreen: boolean) => void;
     onLeaveRoom: () => void;
+    isOverlay?: boolean;
+    timer: number;
 }
 
 export function CustomControlBar({ 
@@ -30,26 +32,19 @@ export function CustomControlBar({
     setActivePanel, 
     isFullscreen, 
     onFullscreenToggle,
-    onLeaveRoom
+    onLeaveRoom,
+    isOverlay,
+    timer
 }: CustomControlBarProps) {
     const room = useRoomContext();
     const [micEnabled, setMicEnabled] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
     const [screenEnabled, setScreenEnabled] = useState(false);
-    const [timer, setTimer] = useState(0);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    // Таймер
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimer(prev => prev + 1);
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
     // Форматирование времени в HH:MM:SS
     const formatTime = (seconds: number) => {
         const hours = Math.floor(seconds / 3600);
@@ -150,13 +145,15 @@ export function CustomControlBar({
     return (
         <div
             style={{
-                position: 'fixed',
-                bottom: 0,
-                left: 0,
-                width: '100%',
-                backgroundColor: 'rgba(0, 0, 0, 0)',
+                position: isOverlay ? "static" : "fixed",
+                bottom: isOverlay ? undefined : 0,
+                left: isOverlay ? undefined : 0,
+                width: "100%",
+                backgroundColor:"transparent",
                 padding: isMobile ? '0.5rem' : '1rem',
-                zIndex: 1000,
+                zIndex: isOverlay ? 1 : 1000,
+                justifyContent: 'space-between',
+                alignItems: 'center',
             }}
         >
             <div
