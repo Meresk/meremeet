@@ -28,6 +28,10 @@ export const RoomContent: React.FC<RoomContentProps> = ({
     const [activePanel, setActivePanel] = useState<'chat' | 'participants' | null>(null);
     const [confirmLeaveRoomModalOpen, setConfirmLeaveRoomModalOpen] = useState(false);
     const [overlayVisible, setOverlayVisible] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
     // Таймер на уровне RoomContent
     const [timer, setTimer] = useState(0);
@@ -51,35 +55,46 @@ export const RoomContent: React.FC<RoomContentProps> = ({
                     onFullscreenToggle={onFullscreenToggle}
                     onLeaveRoom={() => setConfirmLeaveRoomModalOpen(true)}
                     timer={timer}
+                    isSpeaking={isSpeaking}
+                    setIsSpeaking={setIsSpeaking}
                 />
             )}
 
             {/* Fullscreen overlay button */}
             {isFullscreen && !overlayVisible && (
-                <button
-                    onClick={() => setOverlayVisible(true)}
-                    style={{
-                        position: "fixed",
-                        bottom: 20,
-                        right: 20,
-                        zIndex: 2000,
-                        width: 40,
-                        height: 40,
-                        borderRadius: "50%",
-                        border: "none",
-                        background: "rgba(255, 255, 255, 0.07)",
-                        color: "white",
-                        fontSize: "20px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        backdropFilter: "blur(4px)",
-                    }}
-                >
-                    ↑
-                </button>
+                <AnimatePresence>
+                    {!overlayVisible && isFullscreen && (
+                        <motion.button
+                        key="showOverlayBtn"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.3 }}
+                        onClick={() => setOverlayVisible(true)}
+                        style={{
+                            position: "fixed",
+                            bottom: 15,
+                            right: 15,
+                            zIndex: 2000,
+                            width: isMobile ? 30 : 50,
+                            height: isMobile ? 30 : 50,
+                            borderRadius: "50%",
+                            border: "none",
+                            background: "rgba(0, 0, 0, 0.27)",
+                            color: "white",
+                            fontSize: "20px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            backdropFilter: "blur(4px)",
+                        }}
+                        >
+                        ↑
+                        </motion.button>
+                    )}
+                    </AnimatePresence>
             )}
 
             {/* Fullscreen overlay panel*/}
@@ -95,8 +110,8 @@ export const RoomContent: React.FC<RoomContentProps> = ({
                             bottom: 0,
                             left: 0,
                             width: "100%",
-                            background: "rgba(0, 0, 0, 0.09)",
-                            backdropFilter: "blur(6px)",
+                            background: "rgba(0, 0, 0, 0.05)",
+                            backdropFilter: "blur(4px)",
                             zIndex: 2500,
                         }}
                     >
@@ -109,24 +124,27 @@ export const RoomContent: React.FC<RoomContentProps> = ({
                                 onLeaveRoom={() => setConfirmLeaveRoomModalOpen(true)}
                                 isOverlay={true}
                                 timer={timer}
+                                isSpeaking={isSpeaking}
+                                setIsSpeaking={setIsSpeaking}
                             />
 
                             {/* кнопка скрытия панели поверх барa */}
                             <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 20 }}
+                                transition={{ duration: 0.3, delay: 0.1 }}
                                 style={{
                                     position: 'fixed',
                                     bottom: 'calc(100% + 8px)',
-                                    right: 20,
+                                    right: 15,
                                     zIndex: 2600,
                                 }}
-                                >
+                            >
                                 <button onClick={() => setOverlayVisible(false)}
                                     style={{
-                                        width: 40,
-                                        height: 40,
+                                        width: isMobile ? 40 : 50,
+                                        height: isMobile ? 40 : 50,
                                         borderRadius: "50%",
                                         border: "none",
                                         background: "rgba(0, 0, 0, 0.27)",
@@ -176,6 +194,26 @@ function MyVideoConference({ isFullscreen }: MyVideoConferenceProps) {
     
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+    //<---------------------------- РАБОЧИЙ КОСТЫЛЬ ---------------------------->
+    useEffect(() => {
+    // Найти все иконки скриншара и убрать их
+        const icons = document.querySelectorAll('.lk-participant-metadata-item svg');
+        icons.forEach(icon => {
+            if (icon.closest('.lk-participant-metadata-item')?.textContent?.includes("'s screen")) {
+                icon.remove();
+            }
+        });
+        
+        // Убрать текст "'s screen"
+        const names = document.querySelectorAll('.lk-participant-name');
+        names.forEach(name => {
+            if (name.textContent?.endsWith("'s screen")) {
+                name.textContent = name.textContent.replace("'s screen", "");
+            }
+        });
+    }, [tracks]);
+    //<---------------------------- РАБОЧИЙ КОСТЫЛЬ ---------------------------->
 
     return (
         <GridLayout
