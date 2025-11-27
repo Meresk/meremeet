@@ -15,7 +15,7 @@ import {
     GroupOff
 } from "@mui/icons-material";
 import { IconButton, Tooltip, useTheme, useMediaQuery, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import { startVoiceDetection, stopVoiceDetection } from "../../helpers/voiceDetection";
 
 interface CustomControlBarProps {
     activePanel: 'chat' | 'participants' | null;
@@ -23,6 +23,10 @@ interface CustomControlBarProps {
     isFullscreen: boolean;
     onFullscreenToggle: (isFullscreen: boolean) => void;
     onLeaveRoom: () => void;
+    isOverlay?: boolean;
+    timer: number;
+    isSpeaking: boolean;
+    setIsSpeaking: (v:boolean)=>void;
 }
 
 export function CustomControlBar({ 
@@ -30,26 +34,17 @@ export function CustomControlBar({
     setActivePanel, 
     isFullscreen, 
     onFullscreenToggle,
-    onLeaveRoom
+    onLeaveRoom,
+    isOverlay,
+    timer,
+    isSpeaking,
+    setIsSpeaking,
 }: CustomControlBarProps) {
     const room = useRoomContext();
-    const [micEnabled, setMicEnabled] = useState(false);
-    const [isSpeaking, setIsSpeaking] = useState(false);
-    const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
-    const [screenEnabled, setScreenEnabled] = useState(false);
-    const [timer, setTimer] = useState(0);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    // Таймер
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimer(prev => prev + 1);
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
     // Форматирование времени в HH:MM:SS
     const formatTime = (seconds: number) => {
         const hours = Math.floor(seconds / 3600);
@@ -66,14 +61,21 @@ export function CustomControlBar({
 
 
     // микрофон
-    const toggleMic = () => {
-        room.localParticipant.setMicrophoneEnabled(!micEnabled);
-        setMicEnabled(!micEnabled);
-
-        if (!micEnabled) {
-            startVoiceDetection();
-        } else {
-            stopVoiceDetection();
+    const toggleMic = async () => {
+        const micEnabled = room.localParticipant.isMicrophoneEnabled;
+        
+        try {
+            // LiveKit 
+            await room.localParticipant.setMicrophoneEnabled(!micEnabled);
+            
+            // детектор речи
+            if (!micEnabled) {
+                startVoiceDetection(setIsSpeaking);
+            } else {
+                stopVoiceDetection(setIsSpeaking);
+            }
+        } catch (err) {
+            console.error("Failed to toggle microphone:", err);
         }
     };
 
@@ -81,11 +83,12 @@ export function CustomControlBar({
     // трансляция
     const toggleScreen = async () => {
         try {
-            await room.localParticipant.setScreenShareEnabled(!screenEnabled, {
+            const screenShareEnabled = room.localParticipant.isScreenShareEnabled;
+
+            await room.localParticipant.setScreenShareEnabled(!screenShareEnabled, {
                 audio: true,
             });
 
-            setScreenEnabled(!screenEnabled);
         } catch (err) {
             console.error("Failed to toggle screen share:", err);
         }
@@ -107,56 +110,19 @@ export function CustomControlBar({
     };
 
 
-    // индикатор голоса
-    const startVoiceDetection = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            setAudioStream(stream);
-
-            const audioContext = new AudioContext();
-            const source = audioContext.createMediaStreamSource(stream);
-            const analyser = audioContext.createAnalyser();
-            analyser.fftSize = 512;
-
-            const dataArray = new Uint8Array(analyser.frequencyBinCount);
-            source.connect(analyser);
-
-            const checkVolume = () => {
-                analyser.getByteFrequencyData(dataArray);
-
-                // Средний уровень громкости
-                const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-
-                const speaking = avg > 20;
-
-                setIsSpeaking(speaking);
-
-                requestAnimationFrame(checkVolume);
-            };
-
-            checkVolume();
-        } catch (err) {
-            console.error("Ошибка доступа к микрофону:", err);
-        }
-    };
-    const stopVoiceDetection = () => {
-        if (audioStream) {
-            audioStream.getTracks().forEach(t => t.stop());
-            setAudioStream(null);
-            setIsSpeaking(false);
-        }
-    };
 
     return (
         <div
             style={{
-                position: 'fixed',
-                bottom: 0,
-                left: 0,
-                width: '100%',
-                backgroundColor: 'rgba(0, 0, 0, 0)',
+                position: isOverlay ? "static" : "fixed",
+                bottom: isOverlay ? undefined : 0,
+                left: isOverlay ? undefined : 0,
+                width: "100%",
+                backgroundColor:"transparent",
                 padding: isMobile ? '0.5rem' : '1rem',
-                zIndex: 1000,
+                zIndex: isOverlay ? 1 : 1000,
+                justifyContent: 'space-between',
+                alignItems: 'center',
             }}
         >
             <div
@@ -196,18 +162,18 @@ export function CustomControlBar({
                 >
                     
                     <div style={{ position: "relative" }}>
-                        <Tooltip title={micEnabled ? "turn off mic" : "turn on mic"}>
+                        <Tooltip title={room.localParticipant.isMicrophoneEnabled ? "turn off mic" : "turn on mic"}>
                             <IconButton
                                 onClick={toggleMic}
                                 color="primary"
                                 size={isMobile ? "small" : "medium"}
                             >
-                                {micEnabled ? <Mic /> : <MicOff />}
+                                {room.localParticipant.isMicrophoneEnabled ? <Mic /> : <MicOff />}
                             </IconButton>
                         </Tooltip>
 
                         {/* Индикатор активности */}
-                        {micEnabled && (
+                        {room.localParticipant.isMicrophoneEnabled && (
                             <span
                                 style={{
                                     position: "absolute",
@@ -223,13 +189,13 @@ export function CustomControlBar({
                         )}
                     </div>
 
-                    <Tooltip title={screenEnabled ? "stop stream" : "start stream"}>
+                    <Tooltip title={room.localParticipant.isScreenShareEnabled ? "stop stream" : "start stream"}>
                         <IconButton 
                             onClick={toggleScreen} 
                             color="primary"
                             size={isMobile ? "small" : "medium"}
                         >
-                            {screenEnabled ? <ScreenShare /> :  <StopScreenShare />}
+                            {room.localParticipant.isScreenShareEnabled ? <ScreenShare /> :  <StopScreenShare />}
                         </IconButton>
                     </Tooltip>
 
