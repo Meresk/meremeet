@@ -188,8 +188,16 @@ interface MyVideoConferenceProps {
 
 function MyVideoConference({ isFullscreen }: MyVideoConferenceProps) {
     const tracks = useTracks(
-        [{ source: Track.Source.ScreenShare, withPlaceholder: false }],
+        [
+            { source: Track.Source.ScreenShare, withPlaceholder: false },
+            { source: Track.Source.Camera, withPlaceholder: false}
+        ],
         { onlySubscribed: false }
+    );
+    
+    // Оставляем только треки с реально включённым видео
+    const videoTracks = tracks.filter(
+        t => t.publication?.isSubscribed && !t.publication?.isMuted
     );
     
     const theme = useTheme();
@@ -215,7 +223,7 @@ function MyVideoConference({ isFullscreen }: MyVideoConferenceProps) {
     }, [tracks]);
     //<---------------------------- РАБОЧИЙ КОСТЫЛЬ ---------------------------->
 
-    return (
+    return videoTracks.length > 0 ? (
         <GridLayout
             tracks={tracks}
             style={{
@@ -229,5 +237,5 @@ function MyVideoConference({ isFullscreen }: MyVideoConferenceProps) {
         >
             <ParticipantTile />
         </GridLayout>
-    );
+    ) : null;
 }

@@ -12,7 +12,9 @@ import {
     FullscreenExit, 
     SpeakerNotesOff,
     Group, 
-    GroupOff
+    GroupOff,
+    Videocam,
+    VideocamOff
 } from "@mui/icons-material";
 import { IconButton, Tooltip, useTheme, useMediaQuery, Typography } from "@mui/material";
 import { startVoiceDetection, stopVoiceDetection } from "../../helpers/voiceDetection";
@@ -94,6 +96,17 @@ export function CustomControlBar({
         }
     };
 
+    const toggleVideoCam = async () => {
+        try {
+            const videoCamEnabled = room.localParticipant.isCameraEnabled;
+
+            await room.localParticipant.setCameraEnabled(!videoCamEnabled);
+
+        } catch (err) {
+            console.error("Failed to toggle videocam:", err);
+        }
+    };
+
 
     // стрим на полный экран
     const toggleFullscreen = () => {
@@ -137,9 +150,9 @@ export function CustomControlBar({
                 <Typography
                     sx={{
                         color: 'white',
-                        fontSize: isMobile ? '11px' : '16px',
+                        fontSize: isMobile ? '8px' : '16px',
                         fontWeight: '500',
-                        minWidth: isMobile ? '60px' : '60px',
+                        minWidth: isMobile ? '50px' : '60px',
                         textAlign: 'center',
                         fontFamily: 'monospace',
                         backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -155,7 +168,7 @@ export function CustomControlBar({
                     style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        gap: isMobile ? '0.9rem' : '2rem',
+                        gap: isMobile ? '0.6rem' : '2rem',
                         alignItems: 'center',
                         flex: 1,
                     }}
@@ -196,6 +209,16 @@ export function CustomControlBar({
                             size={isMobile ? "small" : "medium"}
                         >
                             {room.localParticipant.isScreenShareEnabled ? <ScreenShare /> :  <StopScreenShare />}
+                        </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title={room.localParticipant.isCameraEnabled ? "stop webcam" : "start webcam"}>
+                        <IconButton 
+                            onClick={toggleVideoCam} 
+                            color="primary"
+                            size={isMobile ? "small" : "medium"}
+                        >
+                            {room.localParticipant.isCameraEnabled ? <Videocam /> :  <VideocamOff />}
                         </IconButton>
                     </Tooltip>
 
