@@ -131,7 +131,7 @@ export function CustomControlBar({
                 bottom: isOverlay ? undefined : 0,
                 left: isOverlay ? undefined : 0,
                 width: "100%",
-                backgroundColor:"transparent",
+                backgroundColor:"rgba(0, 0, 0, 0.3)",
                 padding: isMobile ? '0.5rem' : '1rem',
                 zIndex: isOverlay ? 1 : 1000,
                 justifyContent: 'space-between',
