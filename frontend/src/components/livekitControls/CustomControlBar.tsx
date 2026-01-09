@@ -18,6 +18,7 @@ import {
 } from "@mui/icons-material";
 import { IconButton, Tooltip, useTheme, useMediaQuery, Typography } from "@mui/material";
 import { startVoiceDetection, stopVoiceDetection } from "../../helpers/voiceDetection";
+import React, { useEffect } from "react";
 
 interface CustomControlBarProps {
     activePanel: 'chat' | 'participants' | null;
@@ -46,6 +47,36 @@ export function CustomControlBar({
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+    const [hasUnreadChat, setHasUnreadChat] = React.useState(false);
+    const [hasNewParticipant, setHasNewParticipant] = React.useState(false);
+
+    useEffect(() => {
+        const handleMessage = () => {
+            if (activePanel !== 'chat') {
+                setHasUnreadChat(true);
+            }
+        };
+
+        room.on("dataReceived", handleMessage);
+
+        return () => {
+            room.off("dataReceived", handleMessage);
+        };
+    }, [room, activePanel]);
+    useEffect(() => {
+        const handleParticipantConnected = () => {
+            if (activePanel !== 'participants') {
+                setHasNewParticipant(true);
+            }
+        };
+
+        room.on("participantConnected", handleParticipantConnected);
+
+        return () => {
+            room.off("participantConnected", handleParticipantConnected);
+        };
+    }, [room, activePanel]);
 
     // Форматирование времени в HH:MM:SS
     const formatTime = (seconds: number) => {
@@ -121,7 +152,6 @@ export function CustomControlBar({
             onFullscreenToggle(false);
         }
     };
-
 
 
     return (
@@ -222,25 +252,63 @@ export function CustomControlBar({
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title={activePanel === 'chat' ? "hide chat" : "reveal chat"}>
-                        <IconButton 
-                            onClick={() => togglePanel('chat')} 
-                            color="primary"
-                            size={isMobile ? "small" : "medium"}
-                        >
-                            {activePanel === 'chat' ? <Chat /> : <SpeakerNotesOff />}
-                        </IconButton>
-                    </Tooltip>
+                    <div style={{ position: "relative" }}>
+                        <Tooltip title={activePanel === 'chat' ? "hide chat" : "reveal chat"}>
+                            <IconButton
+                                onClick={() => {
+                                    togglePanel('chat');
+                                    setHasUnreadChat(false);
+                                }}
+                                color="primary"
+                                size={isMobile ? "small" : "medium"}
+                            >
+                                {activePanel === 'chat' ? <Chat /> : <SpeakerNotesOff />}
+                            </IconButton>
+                        </Tooltip>
 
-                    <Tooltip title={activePanel === 'participants' ? "hide partakers" : "reveal partakers"}>
-                        <IconButton 
-                            onClick={() => togglePanel('participants')} 
-                            color="primary"
-                            size={isMobile ? "small" : "medium"}
-                        >
-                            {activePanel === 'participants' ? <Group /> : <GroupOff />}
-                        </IconButton>
-                    </Tooltip>
+                        {hasUnreadChat && activePanel !== 'chat' && (
+                            <span
+                                style={{
+                                    position: "absolute",
+                                    bottom: -1,
+                                    left: "40%",
+                                    width: "20%",
+                                    height: 3,
+                                    borderRadius: 3,
+                                    backgroundColor: "rgba(136, 250, 170, 0.85)",
+                                }}
+                            />
+                        )}
+                    </div>
+
+                    <div style={{ position: "relative" }}>
+                        <Tooltip title={activePanel === 'participants' ? "hide partakers" : "reveal partakers"}>
+                            <IconButton
+                                onClick={() => {
+                                    togglePanel('participants');
+                                    setHasNewParticipant(false);
+                                }}
+                                color="primary"
+                                size={isMobile ? "small" : "medium"}
+                            >
+                                {activePanel === 'participants' ? <Group /> : <GroupOff />}
+                            </IconButton>
+                        </Tooltip>
+
+                        {hasNewParticipant && activePanel !== 'participants' && (
+                            <span
+                                style={{
+                                    position: "absolute",
+                                    bottom: -1,
+                                    left: "40%",
+                                    width: "20%",
+                                    height: 3,
+                                    borderRadius: 3,
+                                    backgroundColor: "rgba(255, 244, 148, 0.9)",
+                                }}
+                            />
+                        )}
+                    </div>
 
                     <Tooltip title={isFullscreen ? "exit full sceen" : "full sceen"}>
                         <IconButton 

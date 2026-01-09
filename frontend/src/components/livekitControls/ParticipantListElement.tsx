@@ -1,5 +1,5 @@
-import React from "react";
-import { useParticipants } from "@livekit/components-react";
+import React, { useEffect, useRef } from "react";
+import { useParticipants, useRoomContext } from "@livekit/components-react";
 import { Person } from "@mui/icons-material";
 
 interface ParticipantListProps {
@@ -8,6 +8,48 @@ interface ParticipantListProps {
 
 export const ParticipantList: React.FC<ParticipantListProps> = ({ visible }) => {
     const participants = useParticipants();
+    const room = useRoomContext();
+
+    const joinSoundRef = useRef<HTMLAudioElement | null>(null);
+    const leaveSoundRef = useRef<HTMLAudioElement | null>(null);
+
+    useEffect(() => {
+        joinSoundRef.current = new Audio("/sounds/user-join.mp3");
+        joinSoundRef.current.volume = 0.4;
+        joinSoundRef.current.load();
+
+        leaveSoundRef.current = new Audio("/sounds/user-leave.mp3");
+        leaveSoundRef.current.volume = 0.3;
+        leaveSoundRef.current.load();
+    }, []);
+
+    // Звук входа участника
+    useEffect(() => {
+        const handleParticipantConnected = () => {
+            joinSoundRef.current
+                ?.play()
+                .catch(() => {});
+        };
+
+        room.on("participantConnected", handleParticipantConnected);
+
+        return () => {
+            room.off("participantConnected", handleParticipantConnected);
+        };
+    }, [room]);
+
+    // Звук выхода участника
+    useEffect(() => {
+        const handleParticipantDisconnected = () => {
+            leaveSoundRef.current?.play().catch(() => {});
+        };
+
+        room.on("participantDisconnected", handleParticipantDisconnected);
+
+        return () => {
+            room.off("participantDisconnected", handleParticipantDisconnected);
+        };
+    }, [room]);
 
     return (
         <div
