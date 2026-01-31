@@ -18,7 +18,7 @@ frontend:
 <img width="2549" height="1339" alt="image" src="https://github.com/user-attachments/assets/a9c29559-fcd1-4ab0-a24b-e439a25a85f8" />
 
 ### room tab
-<img width="2551" height="1337" alt="image" src="https://github.com/user-attachments/assets/3a5cb13d-e0ea-4a0d-8221-91f8923485ce" />
+<img width="2554" height="1351" alt="image" src="https://github.com/user-attachments/assets/d64642ec-23f0-4b3b-9e50-a31a7a692594" />
 
 ### dashboard tab for creating and list rooms
 <img width="2554" height="1342" alt="image" src="https://github.com/user-attachments/assets/67f5eef8-5bb0-40f8-9620-6de422c4eacb" />
