@@ -2,7 +2,7 @@
 
 ## stack
 backend:
-- golang; fiber, livekit
+- golang, fiber, livekit
 
 frontend:
 - react, ts, vite
